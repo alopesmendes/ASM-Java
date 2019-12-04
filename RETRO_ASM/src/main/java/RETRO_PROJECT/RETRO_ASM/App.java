@@ -15,7 +15,7 @@ import fr.umlv.parser.Parser;
  */
 public class App {
     public static void main( String[] args ) throws IOException {
-    	byte[] b = Parser.parser(Paths.get("RetroTest/bin/fr/umlv/exemples/Exemple.class"));
+    	byte[] b = Parser.parser(Paths.get("../RetroTest/bin/fr/umlv/exemples/Exemple.class"));
     	
     	ClassReader reader = new ClassReader(b);
     	ClassVisitor visitor = new ClassVisitor(Opcodes.ASM7) {
