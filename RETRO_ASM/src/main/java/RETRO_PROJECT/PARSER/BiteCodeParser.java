@@ -1,8 +1,12 @@
-package fr.umlv.parser;
+package RETRO_PROJECT.PARSER;
 
 
 public class BiteCodeParser {
 	
+	/**
+	 * @param bytes
+	 * @return number of version according to bytes.
+	 */
 	public static int getVersion(byte[] bytes) {
 		if (bytes.length<8) {
 			throw new  IllegalArgumentException();
