@@ -3,6 +3,8 @@ package RETRO_PROJECT.PARSER;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -34,5 +36,13 @@ public class Parser {
 			forEach(reader -> reader.accept(visitor, ClassReader.EXPAND_FRAMES));
 		}
 	}	
+	
+	public static List<ClassReader> parseReader(Path path) throws IOException {
+		try(var walk = Files.walk(path)) {
+			return 	walk.filter(p -> p.toString().endsWith(".class")).
+					map(Parser::parsingFile).map(ClassReader::new).
+					collect(Collectors.toList());
+		}
+	}
 	
 }

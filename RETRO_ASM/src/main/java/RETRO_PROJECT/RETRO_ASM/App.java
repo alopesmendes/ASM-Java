@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 import RETRO_PROJECT.PARSER.Parser;
 
@@ -36,5 +37,6 @@ public class App {
     	};
     	reader.accept(visitor, ClassReader.EXPAND_FRAMES);*/
     	Parser.parser(Paths.get("../RetroTest"), visitor);
+    	System.out.println(Type.getType(String.class).getDescriptor());
     }
 }
