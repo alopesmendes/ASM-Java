@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 
 import RETRO_PROJECT.PARSER.Parser;
 
@@ -23,20 +23,20 @@ public class App {
     			System.out.println("Version: " + (version - 44) + " name: " + name + " super: " + superName );
     			super.visit(version, access, name, signature, superName, interfaces);
     		}
-    	};
-    	/*byte[] b = Parser.parsingFile(Paths.get("../RetroTest/bin/fr/umlv/exemples/Exemple.class"));
-    	
-    	ClassReader reader = new ClassReader(b);
-    	ClassVisitor visitor = new ClassVisitor(Opcodes.ASM7) {
+    		
     		@Override
-    		public void visit(int version, int access, String name, String signature, String superName,
-    				String[] interfaces) {
-    			System.out.println("Version: " + version + " super: " + superName);
-    			super.visit(version, access, name, signature, superName, interfaces);
+    		public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
+    				String[] exceptions) {
+    			
+    			System.out.println("\t" + name + " " + descriptor);
+    			return super.visitMethod(access, name, descriptor, signature, exceptions);
     		}
     	};
-    	reader.accept(visitor, ClassReader.EXPAND_FRAMES);*/
-    	Parser.parser(Paths.get("../RetroTest"), visitor);
-    	System.out.println(Type.getType(String.class).getDescriptor());
+    	
+    	
+    	
+    	Parser.parserJar(Paths.get("../yo.jar"), visitor);
+    	System.out.println();
+    	Parser.parserFile(Paths.get("../RetroTest"), visitor);
     }
 }

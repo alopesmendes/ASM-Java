@@ -3,8 +3,7 @@ package RETRO_PROJECT.PARSER;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.zip.ZipInputStream;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -12,6 +11,7 @@ import org.objectweb.asm.ClassVisitor;
 public class Parser { 
 	
 	/**
+	 * 
 	 * @param path
 	 * @return array of byte according to path.
 	 */
@@ -24,25 +24,36 @@ public class Parser {
 	}
 	
 	/**
-	 * Parses all files .class in given path.
+	 * Parses all files .class in given path corresponding to a project.
 	 * @param path
 	 * @param visitor
 	 * @throws IOException
 	 */
-	public static void parser(Path path, ClassVisitor visitor) throws IOException {
+	public static void parserFile(Path path, ClassVisitor visitor) throws IOException {
 		try(var walk = Files.walk(path)) {
 			walk.filter(p -> p.toString().endsWith(".class")).
 			map(Parser::parsingFile).map(ClassReader::new).
 			forEach(reader -> reader.accept(visitor, ClassReader.EXPAND_FRAMES));
 		}
-	}	
-	
-	public static List<ClassReader> parseReader(Path path) throws IOException {
-		try(var walk = Files.walk(path)) {
-			return 	walk.filter(p -> p.toString().endsWith(".class")).
-					map(Parser::parsingFile).map(ClassReader::new).
-					collect(Collectors.toList());
-		}
 	}
 	
+	
+	/**
+	 * Parses all files .class in given path corresponding to a jar.
+	 * @param path
+	 * @param visitor
+	 * @throws IOException
+	 */
+	public static void parserJar(Path path, ClassVisitor visitor) throws IOException {
+		try (var in = new ZipInputStream(Files.newInputStream(path))) {
+			for (var jar = in.getNextEntry(); jar != null; jar = in.getNextEntry()) {
+				if (!(jar.getName().endsWith(".class"))) {
+					continue;
+				}
+				new ClassReader(in).accept(visitor, ClassReader.EXPAND_FRAMES);;
+			}
+		}
+		
+	}	
+
 }
