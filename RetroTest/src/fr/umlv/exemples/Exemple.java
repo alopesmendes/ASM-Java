@@ -1,7 +1,8 @@
 package fr.umlv.exemples;
 
 public class Exemple {
-	public static void main(String[] args) {
-		
+	@Override
+	public String toString() {
+		return "Exemple "+Math.random();
 	}
 }
