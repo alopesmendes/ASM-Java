@@ -1,5 +1,5 @@
 package RETRO_PROJECT.Features;
 
 public interface Feature {
-	public void detectFeature();
+	public boolean detectFeature(String feature);
 }
