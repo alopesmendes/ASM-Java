@@ -48,14 +48,21 @@ public class Parser {
 		return !zipEntry.isDirectory() && zipEntry.getName().endsWith(".class");
 	}
 	
+	/**
+	 * Creates the ClassReader according to a class file.
+	 * @param path
+	 * @return ClassReader corresponding to file.
+	 * @throws IOException
+	 */
 	private static ClassReader parserFile(Path path) throws IOException {
 		return new ClassReader(parsingPathToByte(path));		
 	}
 	
+
 	/**
-	 * Parses all files .class in given path corresponding directory.
+	 * Creates a List of ClassReader each ClassReader relied to a class file.
 	 * @param path
-	 * @param visitor
+	 * @return List of ClassReader according to a Directory.
 	 * @throws IOException
 	 */
 	private static List<ClassReader> parserDirectory(Path path) throws IOException {
@@ -68,10 +75,11 @@ public class Parser {
 	}
 	
 	
+
 	/**
-	 * Parses all files .class in given path corresponding to a jar.
+	 * Creates a List of ClassReader each ClassReader relied to a class file.
 	 * @param path
-	 * @param visitor
+	 * @return List of ClassReader according to a jar.
 	 * @throws IOException
 	 */
 	private static List<ClassReader> parserJar(Path path) throws IOException {
@@ -87,6 +95,12 @@ public class Parser {
 		}	
 	}	
 	
+	/**
+	 * Chooses how to parse our path and return the List of ClassReader.
+	 * @param path
+	 * @return List of ClassReader.
+	 * @throws IOException
+	 */
 	private static List<ClassReader> chooseParser(Path path) throws IOException {
 		if (!Files.isDirectory(path)) {
 			if (path.toString().endsWith(".jar")) { return parserJar(path); }
@@ -95,6 +109,12 @@ public class Parser {
 		else { return parserDirectory(path); }
 	}
 	
+	/**
+	 * Parses a given path and only reads.
+	 * @param path
+	 * @param visitor
+	 * @throws IOException
+	 */
 	public static void parserRead(Path path, ClassVisitor visitor) throws IOException {
 		Objects.requireNonNull(path);
 		Objects.requireNonNull(visitor);
