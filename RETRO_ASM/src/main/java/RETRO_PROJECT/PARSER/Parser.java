@@ -76,8 +76,9 @@ public class Parser {
 	 */
 	private static List<ClassReader> parserJar(Path path) throws IOException {
 		ArrayList<ClassReader> list = new ArrayList<>();
-		try (InputStream in = Files.newInputStream(path)) {
-			ZipInputStream zip = new ZipInputStream(in);
+		try (InputStream in = Files.newInputStream(path); 
+			ZipInputStream zip = new ZipInputStream(in)) {
+			
 			for (ZipEntry jar = zip.getNextEntry(); jar != null; jar = zip.getNextEntry()) {
 				if (!(isClassFile(jar))) { continue; }
 				list.add(new ClassReader(zip));
