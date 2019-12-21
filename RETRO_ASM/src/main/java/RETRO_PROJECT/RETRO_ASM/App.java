@@ -65,11 +65,11 @@ public class App {
     	};
 
 
-    	Parser.parser(Paths.get("../yo.jar"), visitor);
+    	Parser.parserRead(Paths.get("../yo.jar"), visitor);
     	System.out.println();
-    	Parser.parser(Paths.get("../Yo/bin/concat"), visitor);
+    	Parser.parserRead(Paths.get("../Yo/bin/concat"), visitor);
     	System.out.println();
-    	Parser.parser(Paths.get("../Yo/bin/concat/lambda/ConcatLambda.class"), visitor);
+    	Parser.parserRead(Paths.get("../Yo/bin/concat/lambda/ConcatLambda.class"), visitor);
     	
     }
 }

@@ -20,23 +20,23 @@ public class ParserTest {
 	@Test @Tag("parameter")
 	public void testParserWithNullPath() {
 		ClassVisitor visitor = new ClassVisitor(Opcodes.ASM7) { };
-		assertThrows(NullPointerException.class, () -> Parser.parser(null, visitor));
+		assertThrows(NullPointerException.class, () -> Parser.parserRead(null, visitor));
 	}
 	
 	@Test  @Tag("parameter")
 	public void testParserWithNullVisitor() {
 		
-		assertThrows(NullPointerException.class, () -> Parser.parser(Paths.get("../yo.jar"), null));
+		assertThrows(NullPointerException.class, () -> Parser.parserRead(Paths.get("../yo.jar"), null));
 	}
 	
 	@Test @Tag("parameter")
 	public void testInexistantPath() {
 		ClassVisitor visitor = new ClassVisitor(Opcodes.ASM7) { };
 		assertAll(
-			() -> assertThrows(IOException.class, () -> Parser.parser(Paths.get(" "), visitor)),
-			() -> assertThrows(IOException.class, () -> Parser.parser(Paths.get("Inexistant.class"), visitor)),
-			() -> assertThrows(IOException.class, () -> Parser.parser(Paths.get("../Yo/src/Inexistant"), visitor)),
-			() -> assertThrows(IOException.class, () -> Parser.parser(Paths.get("../Inexistant.jar"), visitor))
+			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get(" "), visitor)),
+			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get("Inexistant.class"), visitor)),
+			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get("../Yo/src/Inexistant"), visitor)),
+			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get("../Inexistant.jar"), visitor))
 		);
 	}
 	
@@ -83,9 +83,11 @@ public class ParserTest {
 				super.visitNestHost(nestHost);
 			}
 		};
+		
 		try {
-			Parser.parser(Paths.get("../Yo/bin/concat/Concat.class"), visitor);
+			Parser.parserRead(Paths.get("../Yo/bin/concat/Concat.class"), visitor);
 		} catch (IOException e) { throw new AssertionError(e); }
+		
 		assertAll(
 			() -> assertEquals(0, fieldCounter.value()),
 			() -> assertEquals(2, methodsCounter.value()),
@@ -126,7 +128,7 @@ public class ParserTest {
 		}; 
 		
 		try {
-			Parser.parser(Paths.get("../Yo"), visitor);
+			Parser.parserRead(Paths.get("../Yo"), visitor);
 		} catch (IOException e) { throw new AssertionError(e); }
 		
 		assertAll(
@@ -170,7 +172,7 @@ public class ParserTest {
 		
 		
 		try {
-			Parser.parser(Paths.get("../Yo/bin/concat"), visitor);
+			Parser.parserRead(Paths.get("../Yo/bin/concat"), visitor);
 		} catch (IOException e) { throw new AssertionError(e); }
 		
 		assertAll(
@@ -212,9 +214,8 @@ public class ParserTest {
 			}
 		};
 		
-		
 		try {
-			Parser.parser(Paths.get("../Yo.jar"), visitor);
+			Parser.parserRead(Paths.get("../Yo.jar"), visitor);
 		} catch (IOException e) { throw new AssertionError(e); }
 		
 		assertAll(
