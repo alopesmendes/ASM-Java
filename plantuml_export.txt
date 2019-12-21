@@ -1,0 +1,75 @@
+@startuml
+
+title Retro Asm
+
+note as N1
+packages:
+    <<Frame>> ouvert
+    <<Folder>> ferme
+    <<Node>> test
+class:
+    gris ouvert
+    blanc ferme
+    cyan test
+
+end note
+
+
+package RETRO_PROJECT.PARSER <<Frame>> {
+    class Parser #lightgray {
+        + {static} void parserRead(Path path, ClassVisitor visitor);
+        - {static} List<ClassReader> parserJar(Path path);
+        - {static} ClassReader parserFile(Path path);
+        - {static} List<ClassReader> parserDirectory(Path path);
+        - {static} List<ClassReader> chooseParse(Path path);
+    }
+    
+    class ByteCodeParser #lightgray {
+        + {static} int getVersion(byte[] bytes);
+    }
+    
+}
+
+package RETRO_PROJECT.Features <<Frame>> {
+    
+    Feature <|... NestMates
+    Feature <|... Lambdas
+    Feature <|... Concat
+    Feature <|... Record
+    Feature <|... TryWithRessources
+    
+
+    interface Feature #lightgray {
+        + boolean detectFeature(String feature);
+    }
+    
+    class NestMates #lightgray {
+        + boolean detectFeature(String feature);
+    }
+    
+    class Lambdas #lightgray {
+        + boolean detectFeature(String feature);
+    }
+    
+    class Concat #lightgray {
+        + boolean detectFeature(String Feature);
+    }
+    
+    class Record #lightgray {
+        + boolean detectFeature(String Feature);
+    }
+    
+    class TryWithRessources #lightgray {
+        + boolean detectFeature(String Feature);
+    }
+    
+}
+
+package RETRO_PROJECT.RETRO_ASM #lightgray {
+    class App #lightgray {
+    
+    }
+}
+
+
+@enduml
