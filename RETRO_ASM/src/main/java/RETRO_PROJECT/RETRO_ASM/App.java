@@ -3,11 +3,8 @@ package RETRO_PROJECT.RETRO_ASM;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Handle;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -67,8 +64,12 @@ public class App {
     		}
     	};
 
-    	//Parser.parserJar(Paths.get("../yo.jar"), visitor);
-    	//System.out.println();
-    	Parser.parserFile(Paths.get("../Yo"), visitor);
+
+    	Parser.parser(Paths.get("../yo.jar"), visitor);
+    	System.out.println();
+    	Parser.parser(Paths.get("../Yo/bin/concat"), visitor);
+    	System.out.println();
+    	Parser.parser(Paths.get("../Yo/bin/concat/lambda/ConcatLambda.class"), visitor);
+    	
     }
 }
