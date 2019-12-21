@@ -1,8 +1,12 @@
 package fr.umlv.exemples;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Another {
 	private int size;
@@ -67,12 +71,20 @@ public class Another {
 				map(Exemple::toString).collect(Collectors.joining(", "));
 	}
 	
+	
+	public void parse(Path path) throws IOException {
+		try (Stream<Path> w = Files.walk(path)) {
+			w.map(p -> p.getFileName()).forEach(System.out::println);
+		}
+		String c = "name" + "7";
+		Integer.parseInt(c);
+	}
 
 	public static void main(String[] args) {
-		var a = new Another(5, 10.000, new Exemple());
+		Another a = new Another(5, 10.000, new Exemple());
 		a.add(new Exemple(), 0);
 		System.out.println(a.toString());
-		var e = new Entry<Integer, String>(5, "five");
+		Entry<Integer, String> e = new Entry<Integer, String>(5, "five");
 		System.out.println(e.toString());
 
 	}

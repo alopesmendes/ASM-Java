@@ -3,6 +3,8 @@ package RETRO_PROJECT.PARSER;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.objectweb.asm.ClassReader;
@@ -30,7 +32,7 @@ public class Parser {
 	 * @throws IOException
 	 */
 	public static void parserFile(Path path, ClassVisitor visitor) throws IOException {
-		try(var walk = Files.walk(path)) {
+		try(Stream<Path> walk = Files.walk(path)) {
 			walk.filter(p -> p.toString().endsWith(".class")).
 			map(Parser::parsingFile).map(ClassReader::new).
 			forEach(reader -> reader.accept(visitor, ClassReader.EXPAND_FRAMES));
@@ -45,8 +47,8 @@ public class Parser {
 	 * @throws IOException
 	 */
 	public static void parserJar(Path path, ClassVisitor visitor) throws IOException {
-		try (var in = new ZipInputStream(Files.newInputStream(path))) {
-			for (var jar = in.getNextEntry(); jar != null; jar = in.getNextEntry()) {
+		try (ZipInputStream in = new ZipInputStream(Files.newInputStream(path))) {
+			for (ZipEntry jar = in.getNextEntry(); jar != null; jar = in.getNextEntry()) {
 				if (!(jar.getName().endsWith(".class"))) {
 					continue;
 				}

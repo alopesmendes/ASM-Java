@@ -2,9 +2,10 @@ package RETRO_PROJECT.Features;
 
 public class Lambdas implements Feature {
 
-	public void detectFeature() {
-		// TODO Auto-generated method stub
-
+	@Override
+	public boolean detectFeature(String feature) {
+		return false;
 	}
+
 
 }
