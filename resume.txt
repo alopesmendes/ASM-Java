@@ -1,0 +1,4 @@
+21/12/2019
+	Ailton 	-> 	Fini le parser pour lire les .class
+			-> 	Commence à creer un util pour detecter les features
+			-> Ecriture de test modiafiables par la suite (tags, methodes: temporaire)
