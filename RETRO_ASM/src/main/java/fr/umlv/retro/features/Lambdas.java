@@ -1,10 +1,10 @@
-package RETRO_PROJECT.Features;
+package fr.umlv.retro.features;
 
 public class Lambdas implements Feature {
 
 	@Override
 	public boolean detectFeature(String feature) {
-		return false;
+		return feature.equals("java/lang/invoke/LambdaMetafactory");
 	}
 
 

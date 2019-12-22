@@ -1,4 +1,4 @@
-package RETRO_PROJECT.Features;
+package fr.umlv.retro.features;
 
 public class Record implements Feature {
 

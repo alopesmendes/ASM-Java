@@ -1,4 +1,4 @@
-package RETRO_PROJECT.PARSER;
+package fr.umlv.retro.parser;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +13,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+
+import fr.umlv.retro.parser.Parser;
 
 
 public class ParserTest {

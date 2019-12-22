@@ -1,4 +1,4 @@
-package RETRO_PROJECT.RETRO_ASM;
+package fr.umlv.retro.main;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -8,9 +8,10 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import RETRO_PROJECT.Features.Concat;
-import RETRO_PROJECT.Features.TryWithRessources;
-import RETRO_PROJECT.PARSER.Parser;
+import fr.umlv.retro.features.Concat;
+import fr.umlv.retro.features.Lambdas;
+import fr.umlv.retro.features.TryWithRessources;
+import fr.umlv.retro.parser.Parser;
 
 /**
  * Hello world!
@@ -20,6 +21,7 @@ public class App {
     public static void main( String[] args ) throws IOException {
     	final TryWithRessources t = new TryWithRessources();
     	final Concat concat = new Concat();
+    	final Lambdas lambdas = new Lambdas();
     	ClassVisitor visitor = new ClassVisitor(Opcodes.ASM7) {
     		@Override
     		public void visit(int version, int access, String name, String signature, String superName,
@@ -40,21 +42,18 @@ public class App {
         				if (t.detectFeature(name + " " + descriptor)) {
         					System.out.println("\t -> try " + owner + " " + name + " " + descriptor);
         				}
-        				System.out.println("\t" + name + " " + descriptor);
         				super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
         			}
-        			
-        			@Override
-        			public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-        				System.out.println("\t\t" + name + " " + descriptor);
-        				super.visitFieldInsn(opcode, owner, name, descriptor);
-        			}
+
         			
         			@Override
         			public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
         					Object... bootstrapMethodArguments) {
         				if (concat.detectFeature(name)) {
         					System.out.println("\t -> concat " + name + " " + descriptor);
+        				}
+        				if (lambdas.detectFeature(bootstrapMethodHandle.getOwner())) {
+        					System.out.println("\t -> lambda " + name + " " + descriptor);
         				}
         				super.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
         			}
@@ -64,11 +63,6 @@ public class App {
     		}
     	};
 
-
-    	Parser.parserRead(Paths.get("../yo.jar"), visitor);
-    	System.out.println();
-    	Parser.parserRead(Paths.get("../Yo/bin/concat"), visitor);
-    	System.out.println();
     	Parser.parserRead(Paths.get("../Yo/bin/concat/lambda/ConcatLambda.class"), visitor);
     	
     }

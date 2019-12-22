@@ -1,4 +1,4 @@
-package RETRO_PROJECT.RETRO_ASM;
+package fr.umlv.retro.main;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

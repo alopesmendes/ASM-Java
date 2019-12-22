@@ -1,4 +1,4 @@
-package RETRO_PROJECT.PARSER;
+package fr.umlv.retro.parser;
 
 import java.io.IOError;
 import java.io.IOException;
