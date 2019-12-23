@@ -1,4 +1,4 @@
-package fr.umlv.options;
+package fr.umlv.retro.options;
 
 
 public interface Option {

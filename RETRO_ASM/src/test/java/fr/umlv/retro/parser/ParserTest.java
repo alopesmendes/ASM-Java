@@ -1,4 +1,4 @@
-package RETRO_PROJECT.PARSER;
+package fr.umlv.retro.parser;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;

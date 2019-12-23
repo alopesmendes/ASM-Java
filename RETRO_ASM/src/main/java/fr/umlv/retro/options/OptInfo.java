@@ -1,4 +1,4 @@
-package fr.umlv.options;
+package fr.umlv.retro.options;
 public class OptInfo implements Option {
 
 	@Override
