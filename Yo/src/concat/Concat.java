@@ -2,9 +2,12 @@ package concat;
 
 public class Concat {
 	
+	private int i;
+	private String s = "aaa"+"bbb"+i;
 	
 	public static void main(String[] args) {
-		String c = args[0]+" "+args[0];
-		System.out.println(c);
+		Concat concat = new Concat();
+		String c = args[1]+"var"+" "+args[0];
+		System.out.println(c+concat.s);
 	}
 }

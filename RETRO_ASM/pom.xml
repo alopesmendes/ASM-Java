@@ -9,7 +9,7 @@
 
   <name>RETRO_ASM</name>
   <url>http://maven.apache.org</url>
-
+  
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -40,7 +40,6 @@
   		<version>7.2</version>
   	</dependency>
   </dependencies>
-  
   <build>
     <plugins>
         <plugin>
