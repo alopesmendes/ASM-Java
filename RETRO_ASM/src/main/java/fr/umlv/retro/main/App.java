@@ -3,12 +3,15 @@ package fr.umlv.retro.main;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 import fr.umlv.retro.features.Concat;
 import fr.umlv.retro.features.Feature;
@@ -55,35 +58,45 @@ public class App {
     			super.visitNestMember(nestMember);
     		}
     		
+    		
     		@Override
     		public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
     				String[] exceptions) {
     			String methodDescriptor = name+descriptor;
  
     			
-    			MethodVisitor mv = new MethodVisitor(Opcodes.ASM7, super.visitMethod(access, name, descriptor, signature, exceptions)) {		
+    			MethodVisitor mv = new MethodVisitor(Opcodes.ASM7) {		
         			private int line;
         			private String onMethod = "";
+        			private boolean isTryWithRessources; 
         			
         			@Override
         			public void visitLineNumber(int line, Label start) {
         				this.line = line;
         				super.visitLineNumber(line, start);
         			}
+        			
+        			@Override
+        			public void visitFrame(int type, int numLocal, Object[] local, int numStack, Object[] stack) {
+        				isTryWithRessources = IntStream.range(0, numLocal).mapToObj(i -> local[i].toString())
+        				.anyMatch(s -> s.equals(Type.getInternalName(Throwable.class)));
+        				
+        				super.visitFrame(type, numLocal, local, numStack, stack);
+        			}
     				
     				@Override
         			public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
         					boolean isInterface) {
-        				if (Feature.detect(name + " " + descriptor, "addSuppressed (Ljava/lang/Throwable;)V")) {
+        				if (isTryWithRessources && Feature.detect(name + descriptor, "addSuppressed(Ljava/lang/Throwable;)V")) {
         					fHistory.add(TryWithRessources.create(className, methodDescriptor, onMethod, line));
         					history.onMessageReceived(TryWithRessources.class, fHistory.getLast().toString());
         				}
-        				if (Opcodes.INVOKEVIRTUAL == opcode || Opcodes.INVOKEINTERFACE == opcode) {
+     
+        				if (opcode == Opcodes.INVOKEVIRTUAL || Opcodes.INVOKEINTERFACE == opcode) {
         					onMethod = owner;
         				}
         				super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
         			}
-
         			
         			@Override
         			public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
@@ -101,8 +114,7 @@ public class App {
         		return mv;	
     		}
     	};
-
-    	Parser.parserRead(Paths.get("../Yo/src/concat/lambda"), visitor);
+    	Parser.parserRead(Paths.get("../Yo/src/concat/lambda/TestTryWithResource.class"), visitor);
     	System.out.println(history);
     }
 }
