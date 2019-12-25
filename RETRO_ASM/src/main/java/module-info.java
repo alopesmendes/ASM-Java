@@ -1,5 +1,5 @@
 module retro {
-	exports fr.umlv.retro.observer;
+	//exports fr.umlv.retro.observer;
 	exports fr.umlv.retro.options;
 	exports fr.umlv.retro.parser;
 	//exports fr.umlv.retro.features;
