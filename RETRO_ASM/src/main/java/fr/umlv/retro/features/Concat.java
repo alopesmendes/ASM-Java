@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
 public class Concat implements Feature {
 	private final String className;
 	private final String methodDescriptor;
@@ -30,6 +34,23 @@ public class Concat implements Feature {
 		return new Concat(cName, method, line, args);
 	}
 	
+	public MethodVisitor rewrite(MethodVisitor mv) {
+		mv.visitCode();
+		
+		mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(StringBuilder.class));
+		mv.visitInsn(Opcodes.DUP);
+		/*mv.visitMethodInsn(Opcodes.INVOKESPECIAL, Type.getInternalName(StringBuilder.class), "<init>", "()V", false);
+		try {
+			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, Type.getInternalName(StringBuilder.class), 
+					"toString", 
+					Type.getMethodDescriptor(String.class.getMethod("toString")), false);
+		} catch (NoSuchMethodException | SecurityException e) {
+			throw new AssertionError(e);
+		}*/
+		mv.visitEnd();
+		return mv;
+	}
+	
 	private static String convert(String arg) {
 		return arg.equals("\u0001") ? "%1" : arg;
 	}
@@ -41,5 +62,7 @@ public class Concat implements Feature {
 				Arrays.stream(args).map(Concat::convert).
 				collect(Collectors.joining());
 	}
+	
+	
 	
 }

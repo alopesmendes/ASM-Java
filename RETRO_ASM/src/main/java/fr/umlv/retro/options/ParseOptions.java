@@ -28,7 +28,6 @@ public class ParseOptions {
 			liste.add(args[test]);
 			test++;
 		}
-		return liste;
-		
+		return liste;		
 	}
 }

@@ -3,6 +3,7 @@ package fr.umlv.retro.parser;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -121,6 +122,12 @@ public class Parser {
 		
 		List<ClassReader> readers = chooseParser(path);
 		readers.forEach(r -> r.accept(visitor, ClassReader.EXPAND_FRAMES));
+	}
+	
+	public static void change(Path path, byte[] bytes) throws IOException {
+		try(OutputStream out = Files.newOutputStream(path)) {
+			out.write(bytes);
+		}
 	}
 
 }

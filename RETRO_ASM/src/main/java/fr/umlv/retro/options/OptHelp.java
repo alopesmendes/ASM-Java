@@ -6,7 +6,6 @@ import java.util.Objects;
 public class OptHelp implements Option {
 
 	private OptHelp() {
-		super();
 	}
 
 	@Override
