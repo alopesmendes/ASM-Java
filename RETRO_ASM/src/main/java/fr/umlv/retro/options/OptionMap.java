@@ -18,11 +18,12 @@ public class OptionMap {
 		return map.get(key);
 	}
 	
-	public void put(String key, Function<List<String>,Option> value) {
+	private void put(String key, Function<List<String>,Option> value) {
 		map.put(key, value);
 	}
 	
 	public boolean contains(String key) {
+		Objects.requireNonNull(key);
 		return map.containsKey(key);
 	}
 	

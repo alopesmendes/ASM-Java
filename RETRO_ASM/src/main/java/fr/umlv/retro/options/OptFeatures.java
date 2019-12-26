@@ -12,7 +12,7 @@ public class OptFeatures implements Option {
 	/**
 	 * @param args
 	 */
-	public OptFeatures(List<String> args) {
+	private OptFeatures(List<String> args) {
 		this.map = applyArgs(args);
 	}
 	
