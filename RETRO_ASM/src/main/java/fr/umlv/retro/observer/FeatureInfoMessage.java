@@ -95,4 +95,6 @@ public class FeatureInfoMessage {
 	public String infoOf(Class<? extends Feature> type, String... args) {
 		return map.get(type).apply(args);
 	}
+	
+	
 }

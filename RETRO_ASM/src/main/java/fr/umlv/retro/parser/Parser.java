@@ -20,6 +20,8 @@ import org.objectweb.asm.ClassVisitor;
 
 public class Parser { 
 	
+	
+	
 	/**
 	 * Parser a path into a byte array. 
 	 * @param path
