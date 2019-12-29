@@ -142,11 +142,11 @@ public class ObserverVisitor extends ClassVisitor {
 	
 	@Override
 	public void visitInnerClass(String name, String outerName, String innerName, int access) {
-		if (name.equals("java/lang/invoke/MethodHandles$Lookup")) {
+		/*if (name.equals("java/lang/invoke/MethodHandles$Lookup")) {
 			observerHistory.onMessageReceived(Nestmates.class, messages.infoOf(Nestmates.class, 
 				className+"$MyConsumer", className, " nestmate of ", className
 			));
-		}
+		}*/
 		cv.visitInnerClass(name, outerName, innerName, access);
 	}
 	
