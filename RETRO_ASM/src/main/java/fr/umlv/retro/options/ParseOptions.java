@@ -22,10 +22,18 @@ public class ParseOptions {
 		return liste;
 	}
 	
+	public static OptFeatures getFeatures(List<Option> options) {
+		for (Option option : options) {
+			if (option.isFeatures()) {
+				return (OptFeatures) option;
+			}
+		}
+		return null;
+	}
+	
 	
 	private static boolean isOption(String type, OptionMap map) {
-		return map.contains(type);
-		
+		return map.contains(type);	
 	}
 	
 	private static List<String> parseDescription(int indice,String[] args){
