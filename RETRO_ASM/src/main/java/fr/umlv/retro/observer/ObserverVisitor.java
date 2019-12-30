@@ -2,11 +2,11 @@ package fr.umlv.retro.observer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -25,10 +25,9 @@ public class ObserverVisitor extends ClassVisitor {
 	private String className;
 	private String host = "";
 	private final ArrayList<String> members = new ArrayList<>();
-	private final HashMap<String, Integer> methodNameAccess = new HashMap<>();
 	
-	public ObserverVisitor(ClassVisitor cv) {
-		super(Opcodes.ASM7, cv);
+	public ObserverVisitor() {
+		super(Opcodes.ASM7, new ClassWriter(0));
 	}
 	
 	@Override
@@ -55,7 +54,7 @@ public class ObserverVisitor extends ClassVisitor {
 		cv.visitNestMember(nestMember);
 	}
 	
-	private MethodVisitor methodVisitor(int access, MethodVisitor methodVisitor,  String methodDescriptor) {
+	private MethodVisitor methodVisitor(ArrayList<Runnable> list, MethodVisitor methodVisitor,  String methodDescriptor) {
 		return new MethodVisitor(api, methodVisitor) {		
 			private int line;
 			private String onMethod = "";
@@ -107,10 +106,9 @@ public class ObserverVisitor extends ClassVisitor {
 				if (Feature.detect(name, "makeConcatWithConstants")) {
 					observerHistory.onMessageReceived(Concat.class, messages.infoOf(Concat.class, className, methodDescriptor, line+"", bootstrapMethodArguments[0].toString()));
 				} else if (Feature.detect(bootstrapMethodHandle.getOwner(), "java/lang/invoke/LambdaMetafactory")) {
-					//Handle h = (Handle)bootstrapMethodArguments[1];					
 					observerHistory.onMessageReceived(Lambdas.class, messages.infoOf(Lambdas.class, className, methodDescriptor, line+"", descriptor, bootstrapMethodArguments[1].toString()));
 				}
-				mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
+				//mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
 			}
 			
 			@Override
@@ -124,8 +122,8 @@ public class ObserverVisitor extends ClassVisitor {
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 			String[] exceptions) {
-		methodNameAccess.put(name, access);
-		return 	methodVisitor(access, 
+		ArrayList<Runnable> list = new ArrayList<>();
+		return 	methodVisitor(list, 
 				super.visitMethod(access, name, descriptor, signature, exceptions),
 				name+descriptor);	
 	}
@@ -139,17 +137,7 @@ public class ObserverVisitor extends ClassVisitor {
 		String n = messages.infoOf(Nestmates.class, host, host, " nest host " + host + " members", m.toString());
 		observerHistory.onMessageReceived(Nestmates.class, n);
 	}
-	
-	@Override
-	public void visitInnerClass(String name, String outerName, String innerName, int access) {
-		/*if (name.equals("java/lang/invoke/MethodHandles$Lookup")) {
-			observerHistory.onMessageReceived(Nestmates.class, messages.infoOf(Nestmates.class, 
-				className+"$MyConsumer", className, " nestmate of ", className
-			));
-		}*/
-		cv.visitInnerClass(name, outerName, innerName, access);
-	}
-	
+
 	@Override
 	public void visitEnd() {
 		messageNestMembers();

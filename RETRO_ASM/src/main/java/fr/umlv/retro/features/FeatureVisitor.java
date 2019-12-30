@@ -1,7 +1,14 @@
 package fr.umlv.retro.features;
 
+import java.util.ArrayList;
+import java.util.function.Consumer;
+import java.util.stream.IntStream;
+
+import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -15,8 +22,8 @@ public class FeatureVisitor extends ClassVisitor {
 	 * @param api
 	 * @param observerVisitor
 	 */
-	public FeatureVisitor(int version, ObserverVisitor observerVisitor) {
-		super(Opcodes.ASM7, observerVisitor);
+	public FeatureVisitor(int version, ClassWriter cw,  ObserverVisitor observerVisitor) {
+		super(Opcodes.ASM7, cw);
 		this.observerVisitor = observerVisitor;
 		this.version = version;
 	}
@@ -28,52 +35,110 @@ public class FeatureVisitor extends ClassVisitor {
 		cv.visit(this.version, access, name, signature, superName, interfaces);
 	}
 	
-	private MethodVisitor rewriteFeatures(MethodVisitor methodVisitor) {
-		return new MethodVisitor(Opcodes.ASM7, methodVisitor) {
+	private MethodVisitor rewriteFeatures(String n, MethodVisitor ov, MethodVisitor methodVisitor) {
+		return new MethodVisitor(api, methodVisitor) {
+			private final ArrayList<Consumer<MethodVisitor>> list = new ArrayList<>();
+			private int start;
 			
 			@Override
 			public void visitCode() {
-				mv.visitCode();
+				
+				ov.visitCode();
+				list.add(mv -> mv.visitCode());
+			}
+			
+			@Override
+			public void visitAttribute(Attribute attribute) {
+				ov.visitAttribute(attribute);
+				list.add(mv -> mv.visitAttribute(attribute));
+			}
+			
+			@Override
+			public void visitJumpInsn(int opcode, Label label) {
+				ov.visitJumpInsn(opcode, label);
+				list.add(mv -> mv.visitJumpInsn(opcode, label));
+			}
+			
+			@Override
+			public void visitVarInsn(int opcode, int var) {
+				ov.visitVarInsn(opcode, var);
+				list.add(mv -> mv.visitVarInsn(opcode, var));
 			}
 			
 			@Override
 			public void visitTypeInsn(int opcode, String type) {
-				mv.visitTypeInsn(opcode, type);
+				ov.visitTypeInsn(opcode, type);
+				list.add(mv -> mv.visitTypeInsn(opcode, type));
 			}
 			
 			@Override
 			public void visitLdcInsn(Object value) {
-				mv.visitLdcInsn(value);
+				ov.visitLdcInsn(value);
+				list.add(mv -> mv.visitLdcInsn(value));
+			}
+			
+			@Override
+			public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end,
+					int index) {
+				ov.visitLocalVariable(name, descriptor, signature, start, end, index);
+				list.add(mv -> mv.visitLocalVariable(name, descriptor, signature, start, end, index));
+			}
+			
+			@Override
+			public void visitIincInsn(int var, int increment) {
+				ov.visitIincInsn(var, increment);
+				list.add(mv -> mv.visitIincInsn(var, increment));
+			}
+			
+			@Override
+			public void visitIntInsn(int opcode, int operand) {
+				ov.visitIntInsn(opcode, operand);
+				
+				list.add(mv -> mv.visitIntInsn(opcode, operand));
 			}
 			
 			@Override
 			public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
-				mv.visitFieldInsn(opcode, owner, name, descriptor);
+				ov.visitFieldInsn(opcode, owner, name, descriptor);				
+				list.add(mv -> mv.visitFieldInsn(opcode, owner, name, descriptor));
 			}
-			
-			
 			
 			@Override
 			public void visitInsn(int opcode) {
-				mv.visitInsn(opcode);
+				ov.visitInsn(opcode);
+				list.add(mv -> mv.visitInsn(opcode));
+			}
+			
+			@Override
+			public void visitLineNumber(int line, Label start) {
+				ov.visitLineNumber(line, start);
+				list.add(mv -> mv.visitLineNumber(line, start));
+			}
+			
+			@Override
+			public void visitLabel(Label label) {
+				list.add(mv -> mv.visitLabel(label));
 			}
 			
 			@Override
 			public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
-				mv.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
-				
+				ov.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+				list.add(mv -> mv.visitMethodInsn(opcode, owner, name, descriptor, isInterface));				
 			}
 			
 			@Override
 			public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
 					Object... bootstrapMethodArguments) {
-				
-				mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
+				ov.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
+				Concat c = Concat.create(descriptor, bootstrapMethodArguments[0].toString());
+				c.rewriteFeature(start, list);
+				//list.add(m -> m.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments));
 			}
 			
 			@Override
 			public void visitEnd() {
-				mv.visitEnd();
+				ov.visitEnd();
+				IntStream.range(0, list.size()).forEach(i -> list.get(i).accept(mv));			
 			}
 		};
 	}
@@ -81,11 +146,10 @@ public class FeatureVisitor extends ClassVisitor {
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 			String[] exceptions) {
+		MethodVisitor ov = observerVisitor.visitMethod(access, name, descriptor, signature, exceptions);
+		MethodVisitor mv = cv.visitMethod(access, name, descriptor, signature, exceptions);
 		
-		MethodVisitor mv = observerVisitor.visitMethod(access, name, descriptor, signature, exceptions);
-		System.out.println("{\n"+observerVisitor+"\n}");
-		
-		return rewriteFeatures(mv);
+		return rewriteFeatures(name, ov, mv);
 	}
 	
 	@Override

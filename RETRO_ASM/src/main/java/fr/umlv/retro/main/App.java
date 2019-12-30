@@ -13,11 +13,11 @@ import fr.umlv.retro.parser.Parser;
 
 public class App {
     public static void main( String[] args ) throws IOException {
-    	Path p = Paths.get("../Yo/src/concat/MyLambda.class");
+    	Path p = Paths.get("../Yo/src/concat/Concat.class");
     	ClassWriter cw = new ClassWriter(0);
-    	ObserverVisitor ov = new ObserverVisitor(cw);
+    	ObserverVisitor ov = new ObserverVisitor();
     	//Parser.parserRead(p, ov);
-    	FeatureVisitor fv= new FeatureVisitor(Opcodes.V14, ov);
+    	FeatureVisitor fv= new FeatureVisitor(Opcodes.V14, cw, ov);
     	
     	Parser.parserRead(p, fv);
     	System.out.println(ov.toString());
