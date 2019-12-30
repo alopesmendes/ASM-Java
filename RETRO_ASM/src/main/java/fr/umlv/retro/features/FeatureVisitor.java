@@ -130,7 +130,7 @@ public class FeatureVisitor extends ClassVisitor {
 			public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
 					Object... bootstrapMethodArguments) {
 				ov.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
-				Concat c = Concat.create(descriptor, bootstrapMethodArguments[0].toString());
+				Concatenation c = Concatenation.create(descriptor, bootstrapMethodArguments[0].toString());
 				c.rewriteFeature(start, list);
 				//list.add(m -> m.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments));
 			}

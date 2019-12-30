@@ -12,7 +12,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import fr.umlv.retro.features.Concat;
+import fr.umlv.retro.features.Concatenation;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.features.Lambdas;
 import fr.umlv.retro.features.Nestmates;
@@ -104,7 +104,7 @@ public class ObserverVisitor extends ClassVisitor {
 			public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
 					Object... bootstrapMethodArguments) {
 				if (Feature.detect(name, "makeConcatWithConstants")) {
-					observerHistory.onMessageReceived(Concat.class, messages.infoOf(Concat.class, className, methodDescriptor, line+"", bootstrapMethodArguments[0].toString()));
+					observerHistory.onMessageReceived(Concatenation.class, messages.infoOf(Concatenation.class, className, methodDescriptor, line+"", bootstrapMethodArguments[0].toString()));
 				} else if (Feature.detect(bootstrapMethodHandle.getOwner(), "java/lang/invoke/LambdaMetafactory")) {
 					observerHistory.onMessageReceived(Lambdas.class, messages.infoOf(Lambdas.class, className, methodDescriptor, line+"", descriptor, bootstrapMethodArguments[1].toString()));
 				}

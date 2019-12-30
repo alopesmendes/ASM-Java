@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.objectweb.asm.Type;
 
-import fr.umlv.retro.features.Concat;
+import fr.umlv.retro.features.Concatenation;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.features.Lambdas;
 import fr.umlv.retro.features.Nestmates;
@@ -83,7 +83,7 @@ public class FeatureInfoMessage {
 	
 	public static FeatureInfoMessage create() {
 		HashMap<Class<? extends Feature>, Function<String[], String>> map = new HashMap<>();
-		map.put(Concat.class, createConcatenationMessage());
+		map.put(Concatenation.class, createConcatenationMessage());
 		map.put(Lambdas.class, createLambdaMessage());
 		map.put(TryWithRessources.class, createTryWithRessourcesMessage());	
 		map.put(Nestmates.class, createNesmateMessage());
