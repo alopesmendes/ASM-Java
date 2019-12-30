@@ -31,6 +31,11 @@ public class OptTarget implements Option {
 	}
 
 
+	/**
+	 * Method of creation of an OptTarget
+	 * @param args
+	 * @return an option instance of OptTarget
+	 */
 	public static Option create(List<String> args) {
 		Option res = new OptTarget(args);
 		return res;

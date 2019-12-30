@@ -5,6 +5,14 @@ import java.util.Objects;
 
 public class OptionFactory {
 	
+	
+	/**
+	 * Method factory of an option
+	 * @param type
+	 * @param description
+	 * @param map
+	 * @return an option
+	 */
 	public Option create(String type, List<String> description, OptionMap map) {
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(description);

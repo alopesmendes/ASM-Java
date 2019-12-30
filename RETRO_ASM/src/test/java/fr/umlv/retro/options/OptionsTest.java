@@ -29,6 +29,52 @@ class OptionsTest {
 		OptionFactory optfac = new OptionFactory();
 		assertThrows(NullPointerException.class, () -> ParseOptions.parse(test, optfac, null));
 	}
+	
+	
+	@Test @Tag("target")
+	public void testParserOptionsWithTarget() {
+		String test[] = {"-Target","12","--force"};
+		OptionMap map = OptionMap.initMap();
+		OptionFactory optfac = new OptionFactory();
+		int res = ParseOptions.parse(test, optfac, map).size();
+		assertEquals(1,  res);
+	}
+	
+	@Test @Tag("infos")
+	public void testParserOptionsWithInfos() {
+		String test[] = {"-Infos"};
+		OptionMap map = OptionMap.initMap();
+		OptionFactory optfac = new OptionFactory();
+		int res = ParseOptions.parse(test, optfac, map).size();
+		assertEquals(1,  res);
+	}
+	
+	@Test @Tag("help")
+	public void testParserOptionsWithHelp() {
+		String test[] = {"-Help"};
+		OptionMap map = OptionMap.initMap();
+		OptionFactory optfac = new OptionFactory();
+		int res = ParseOptions.parse(test, optfac, map).size();
+		assertEquals(1,  res);
+	}
 
+	@Test @Tag("features")
+	public void testParserOptionsWithFeatures() {
+		String test[] = {"-Features", "TryWithRessources," ,"Concatenation"};
+		OptionMap map = OptionMap.initMap();
+		OptionFactory optfac = new OptionFactory();
+		int res = ParseOptions.parse(test, optfac, map).size();
+		assertEquals(1,  res);
+	}
+	
+	
+	@Test@Tag("all")
+	public void testParserOptionsAll() {
+		String test[] = {"-Target","8", "-Features TryWithRessources, Concatenation", "-Help", "-Infos"};
+		OptionMap map = OptionMap.initMap();
+		OptionFactory optfac = new OptionFactory();
+		int res = ParseOptions.parse(test, optfac, map).size();
+		assertEquals(4,  res);
+	}
 }
 

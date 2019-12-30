@@ -46,11 +46,19 @@ public class OptFeatures implements Option {
 		return res;
 	}
 
+	/**
+	 * Method which excecute the option -Features
+	 */
 	@Override
 	public void execute() {
 		map.forEach((k,v)->System.out.println("Feature " + k + " || Activated : " + v));
 	}
 	
+	/**
+	 * Method of creation of an OptFeatures
+	 * @param args
+	 * @return an option instance of OptFeatures
+	 */
 	public static Option create(List<String> args) {
 		Option res = new OptFeatures(args);
 		return res;

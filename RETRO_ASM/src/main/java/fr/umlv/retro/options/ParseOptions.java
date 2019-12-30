@@ -5,6 +5,13 @@ import java.util.List;
 
 public class ParseOptions {
 	
+	/**
+	 * Parse the command line and returns a list of Options
+	 * @param args
+	 * @param optfac
+	 * @param map
+	 * @return a list of Option
+	 */
 	public static List<Option> parse(String[] args,OptionFactory optfac, OptionMap map){
 		List<Option> liste = new ArrayList<Option>();
 		for (int i = 0; i < args.length; i++) {

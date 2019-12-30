@@ -13,6 +13,12 @@ public class OptionMap {
 		this.map = new HashMap<String, Function<List<String>,Option>>();
 	}
 	
+	
+	/**
+	 * 
+	 * @param key
+	 * @return a function of creation of an option corresponding to a key
+	 */
 	public Function<List<String>,Option> get(String key){
 		Objects.requireNonNull(key);
 		return map.get(key);
@@ -22,11 +28,20 @@ public class OptionMap {
 		map.put(key, value);
 	}
 	
+	/**
+	 * 
+	 * @param key
+	 * @return true if key is a key of the map
+	 */
 	public boolean contains(String key) {
 		Objects.requireNonNull(key);
 		return map.containsKey(key);
 	}
 	
+	/**
+	 * method of creation of the OptionMap
+	 * @return the OptionMap which is used by the program
+	 */
 	public static OptionMap initMap() {
 		OptionMap map = new OptionMap();
 		map.put("-Target", OptTarget::create);
