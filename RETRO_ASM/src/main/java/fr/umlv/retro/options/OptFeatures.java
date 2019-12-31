@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import fr.umlv.retro.features.Concat;
+import fr.umlv.retro.features.Concatenation;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.features.Lambdas;
 import fr.umlv.retro.features.Nestmates;
@@ -42,7 +42,7 @@ public class OptFeatures implements Option {
 		HashMap<String, Class<? extends Feature>>map = new HashMap<String, Class<? extends Feature>>();
 		map.put("TryWithRessources", TryWithRessources.class);
 		map.put("Lambda",Lambdas.class);
-		map.put("Concatenation",Concat.class);
+		map.put("Concatenation",Concatenation.class);
 		map.put("Nestmates",Nestmates.class);
 		map.put("Record",Record.class);
 		return map;

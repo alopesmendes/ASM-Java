@@ -48,9 +48,41 @@ public class FeatureVisitor extends ClassVisitor {
 			}
 			
 			@Override
+			public void visitAnnotableParameterCount(int parameterCount, boolean visible) {
+				list.add(mv -> mv.visitAnnotableParameterCount(parameterCount, visible));
+			}
+			
+			@Override
+			public void visitMultiANewArrayInsn(String descriptor, int numDimensions) {
+				list.add(mv -> visitMultiANewArrayInsn(descriptor, numDimensions));
+			}
+			
+			@Override
+			public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
+				list.add(mv -> visitTryCatchBlock(start, end, handler, type));
+			}
+			
+			@Override
+			public void visitTableSwitchInsn(int min, int max, Label dflt, Label... labels) {
+				
+				list.add(mv -> visitTableSwitchInsn(min, max, dflt, labels));
+			}
+			
+			@Override
+			public void visitLookupSwitchInsn(Label dflt, int[] keys, Label[] labels) {
+				list.add(mv -> visitLookupSwitchInsn(dflt, keys, labels));
+			}
+			
+			@Override
 			public void visitAttribute(Attribute attribute) {
 				ov.visitAttribute(attribute);
 				list.add(mv -> mv.visitAttribute(attribute));
+			}
+			
+			@Override
+			public void visitFrame(int type, int numLocal, Object[] local, int numStack, Object[] stack) {
+				ov.visitFrame(type, numLocal, local, numStack, stack);
+				list.add(mv -> visitFrame(type, numLocal, local, numStack, stack));
 			}
 			
 			@Override
@@ -136,9 +168,15 @@ public class FeatureVisitor extends ClassVisitor {
 			}
 			
 			@Override
+			public void visitMaxs(int maxStack, int maxLocals) {
+				list.add(mv -> mv.visitMaxs(maxStack, maxLocals));
+			}
+			
+			@Override
 			public void visitEnd() {
 				ov.visitEnd();
-				IntStream.range(0, list.size()).forEach(i -> list.get(i).accept(mv));			
+				IntStream.range(0, list.size()).forEach(i -> list.get(i).accept(mv));	
+				mv.visitEnd();
 			}
 		};
 	}

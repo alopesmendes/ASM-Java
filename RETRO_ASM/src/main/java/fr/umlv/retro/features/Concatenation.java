@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -23,8 +22,8 @@ public class Concatenation implements Feature {
 		return mv -> {	 
 			String des = Type.getMethodDescriptor(Type.getType(StringBuilder.class), t);
 			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, 
-					Type.getInternalName(StringBuilder.class),
-					"append", des, false);
+				Type.getInternalName(StringBuilder.class),
+				"append", des, false);
 		};
 	};
 	
@@ -37,7 +36,6 @@ public class Concatenation implements Feature {
 	private final ArrayList<String> elements;
 	private final Type[] types;
 	private int j;
-	private int k;
 	
 	private Concatenation(Type[] types, List<String> elements) {
 		this.types = types;
@@ -47,52 +45,53 @@ public class Concatenation implements Feature {
 	
 	public static Concatenation create(String description, String s) {
 		Type[] types = Type.getArgumentTypes(description);
-		List<String> list = Arrays.stream(s.split("\u0001"))
+		List<String> list = Arrays.stream(s.split(""))
 				.collect(Collectors.toList());
 		System.out.println(list);
 		return new Concatenation(types, list);
 	}
 	
-	private void consume(List<Consumer<MethodVisitor>> runs, int index, int i) {
-		/*index = Math.min(runs.size()-1, index);
-		k = index;
-		Consumer<MethodVisitor> consumer = runs.get(index);
-		if (elements.get(i).equals("\u0001")) {
-			runs.set(index, consumer.andThen(append.apply(types[j])));
-			j++;
-		} else {
-			Consumer<MethodVisitor> ldc = mv -> mv.visitLdcInsn(elements.get(i));
-			runs.set(k, runs.get(k).andThen(ldc).andThen(append.apply(Type.getType(String.class))));
-			k= index;
-		}*/
-		Consumer<MethodVisitor> consumer = runs.get(index).andThen(append.apply(types[i]));
-		Consumer<MethodVisitor> ldc = mv -> {
-			if (elements.get(i).isEmpty()) {
-				return;
-			}
+	private Consumer<MethodVisitor> ldc(String text) {
+		return  mv -> {
+			mv.visitLdcInsn(text);
 			String des = Type.getMethodDescriptor(Type.getType(StringBuilder.class), Type.getType(String.class));
-			mv.visitLdcInsn(elements.get(i));
 			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, 
 				Type.getInternalName(StringBuilder.class),
 				"append", des, false);
 		};
-		
-		runs.set(index, consumer);
-		runs.set(index - 1, runs.get(index-1).andThen(ldc));
+	}
+	
+	
+	private void constantString(int k, List<Consumer<MethodVisitor>> runs) {
+		StringBuilder sb = new StringBuilder();
+		for (; j < elements.size() && !elements.get(j).equals("\u0001") && !elements.get(j).equals("\u0002"); j++) {
+			sb.append(elements.get(j));
+		}
+		System.out.println(sb);
+		k= j == elements.size() ? k : k-1;
+		runs.set(k, runs.get(k).andThen(ldc(sb.toString())));
+	}
+	
+	private void consume(List<Consumer<MethodVisitor>> runs) {
+		int k = (runs.size() - types.length);
+		while (j < elements.size()) {
+			Consumer<MethodVisitor> c = runs.get(k);
+			if (elements.get(j).equals("\u0001") || elements.get(j).equals("\u0002")) {
+				runs.set(k, c.andThen(append.apply(types[k - (runs.size() - types.length)])));
+				j++; k = Math.min(runs.size()-1, k+1);
+			} else {
+				constantString(k, runs);
+			}
+		}
 		
 	}
 	
 	@Override
 	public void rewriteFeature(int start, List<Consumer<MethodVisitor>> runs) {
-		int s = runs.size() - types.length;
-		Consumer<MethodVisitor> c2 = runs.get(s);
-		runs.set(s, begin.andThen(c2));
-		//runs.set(s, runs.get(s).andThen(append.apply(Type.INT_TYPE)));
-		System.out.println(runs.size()-s);
-		IntStream.range(s, runs.size()).forEach(i -> {
-			//consume(runs, s+1+j, i);
-			consume(runs, i, i-s);
-		});
+		
+		runs.set(runs.size() - types.length-1, runs.get(runs.size() - types.length-1).andThen(begin));
+		//IntStream.range(0, elements.size()).forEach(x -> consume(x, runs));
+		consume(runs);
 		runs.add(end);
 		
 	}

@@ -6,16 +6,16 @@ public class Concat {
 		return a + "(" + b + ")"+42;
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		int a = 5+2;
 		System.out.println(a);
 		String c = a+"var";
 		String d = c+"ca"+c+c+c+c+"3";
 		System.out.println(d);
-	}
+	}*/
 	
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		Concat c = new Concat();
 		System.out.println(c.m("ici", 5));
-	}*/
+	}
 }

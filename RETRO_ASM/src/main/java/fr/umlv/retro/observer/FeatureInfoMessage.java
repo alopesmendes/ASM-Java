@@ -22,7 +22,12 @@ public class FeatureInfoMessage {
 	}
 	
 	private static String convert(String arg) {
-		return arg.equals("\u0001") ? "%1" : arg;
+		if (arg.equals("\u0001")) {
+			return "%1";
+		} else if (arg.equals("\u0002")) {
+			return "%2";
+		}
+		return arg;
 	}
 	
 	private static String className(String name) {
