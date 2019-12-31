@@ -17,7 +17,7 @@ public class App {
     	ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
     	ObserverVisitor ov = new ObserverVisitor();
     	//Parser.parserRead(p, ov);
-    	FeatureVisitor fv= new FeatureVisitor(Opcodes.V14, cw, ov);
+    	FeatureVisitor fv= new FeatureVisitor(Opcodes.V13, cw, ov);
     	
     	Parser.parserRead(p, fv);
     	System.out.println(ov.toString());

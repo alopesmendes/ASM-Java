@@ -2,8 +2,8 @@ package concat;
 
 public class Concat {
 	
-	String m(String a, int b) {
-		return a + "(" + b + ")"+42;
+	String m(String a, String b) {
+		return "->"+ a + "(" + b + ")"+42;
 	}
 	
 	/*public static void main(String[] args) {
@@ -16,6 +16,6 @@ public class Concat {
 	
 	public static void main(String[] args) {
 		Concat c = new Concat();
-		System.out.println(c.m("ici", 5));
+		System.out.println(c.m("ici", "5") + " yes");
 	}
 }

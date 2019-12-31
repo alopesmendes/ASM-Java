@@ -21,6 +21,7 @@ public class Concatenation implements Feature {
 	private final Function<Type, Consumer<MethodVisitor>> append = t -> {
 		return mv -> {	 
 			String des = Type.getMethodDescriptor(Type.getType(StringBuilder.class), t);
+			//mv.visitVarInsn(Opcodes.ASTORE, t.getSort());
 			mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, 
 				Type.getInternalName(StringBuilder.class),
 				"append", des, false);
@@ -47,7 +48,6 @@ public class Concatenation implements Feature {
 		Type[] types = Type.getArgumentTypes(description);
 		List<String> list = Arrays.stream(s.split(""))
 				.collect(Collectors.toList());
-		System.out.println(list);
 		return new Concatenation(types, list);
 	}
 	
@@ -67,8 +67,7 @@ public class Concatenation implements Feature {
 		for (; j < elements.size() && !elements.get(j).equals("\u0001") && !elements.get(j).equals("\u0002"); j++) {
 			sb.append(elements.get(j));
 		}
-		System.out.println(sb);
-		k= j == elements.size() ? k : k-1;
+		k= j == elements.size() || k == (runs.size() - types.length) ? k : k-1;
 		runs.set(k, runs.get(k).andThen(ldc(sb.toString())));
 	}
 	
@@ -88,8 +87,7 @@ public class Concatenation implements Feature {
 	
 	@Override
 	public void rewriteFeature(int start, List<Consumer<MethodVisitor>> runs) {
-		
-		runs.set(runs.size() - types.length-1, runs.get(runs.size() - types.length-1).andThen(begin));
+		runs.set(runs.size() - types.length, begin.andThen(runs.get(runs.size() - types.length)));
 		//IntStream.range(0, elements.size()).forEach(x -> consume(x, runs));
 		consume(runs);
 		runs.add(end);
