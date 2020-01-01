@@ -15,7 +15,7 @@ import fr.umlv.retro.options.MainOpt;
 public class App {
 	private static Path getPathOf(String[] args) {
 		List<String> features = Arrays.asList(new String[]{"TryWithRessources","Lambda","Concatenation","Nestmates","Record"});
-		Optional<String> s = Arrays.stream(args).filter(a -> !a.startsWith("-")).filter(x -> !x.endsWith(",")).filter(x->!features.contains(x)).filter(x -> Integer.getInteger(x)<14).findFirst();
+		Optional<String> s = Arrays.stream(args).filter(a -> !a.startsWith("-")).filter(x -> !x.endsWith(",")).filter(x->!features.contains(x)).findFirst();
 		if (s.isEmpty()) {
 			return Path.of("");
 		} else {

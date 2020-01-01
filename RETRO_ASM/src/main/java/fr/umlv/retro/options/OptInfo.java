@@ -24,8 +24,7 @@ public class OptInfo implements Option {
 			Parser.parserRead(path, ov);
 		} catch (IOException e) {
 			throw new IOError(e);
-		}
-    	if (features.size()==0) {
+		}if (features.size()==0) {
     		System.out.println(ov.toString());
     	}else {
     		for (Class<? extends Feature> feature : features) {
