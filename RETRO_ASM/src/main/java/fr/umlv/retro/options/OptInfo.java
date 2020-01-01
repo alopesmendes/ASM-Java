@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
+import org.objectweb.asm.ClassVisitor;
 
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.observer.ObserverVisitor;
@@ -18,6 +19,7 @@ public class OptInfo implements Option {
 	@Override
 	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
 		System.out.println("Voici les infos");
+		Parser.parserRead(path, ov);
     	if (features.size()==0) {
     		System.out.println(ov.toString());
     	}else {
