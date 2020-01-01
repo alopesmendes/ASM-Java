@@ -1,6 +1,7 @@
 package fr.umlv.retro.options;
 
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +73,7 @@ public class OptFeatures implements Option {
 	 * Method which execute the option -Features
 	 */
 	@Override
-	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features) {
+	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
 		Objects.requireNonNull(features);
 		Objects.requireNonNull(ov);
 		map.forEach((k,v)->System.out.println("Feature " + k + " || Activated : " + v));

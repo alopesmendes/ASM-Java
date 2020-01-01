@@ -1,5 +1,6 @@
 package fr.umlv.retro.options;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ public class OptHelp implements Option {
 	 * Method which execute the option -Help
 	 */
 	@Override
-	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features) {
+	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
 		System.out.println("Option -Help:\n Fonctionnement du programme:\n Programme de rétrocompilation Java\n \n"
 				+ "Option -Target: option qui nécessite un entier entre 5 et 13 de version pour recompiler le fichier en paramètres "
 					+ "avec --force (facultatif) qui entraine la réecriture des features(par défaut tous sinon à définir avec option -features) non disponibles dans la version de recompilage voulue\n"

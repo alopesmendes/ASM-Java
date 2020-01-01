@@ -1,5 +1,6 @@
 package fr.umlv.retro.options;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ public class OptInfo implements Option {
 	 * Method which execute the option -Infos
 	 */
 	@Override
-	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features) {
+	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
 		System.out.println("Voici les infos");
     	if (features.size()==0) {
     		System.out.println(ov.toString());
