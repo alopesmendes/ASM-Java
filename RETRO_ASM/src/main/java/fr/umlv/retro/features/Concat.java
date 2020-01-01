@@ -100,7 +100,7 @@ public class Concat implements Feature {
 
 	@Override
 	public void rewriteFeature(int start, List<Consumer<MethodVisitor>> runs) {
-		runs.add(runs.size() - types.length, begin());
+		runs.add(runs.size() - types.length - 1, begin());
 
 		consume(runs);
 		runs.add(end());

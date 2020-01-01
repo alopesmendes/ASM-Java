@@ -17,6 +17,10 @@ import java.util.zip.ZipInputStream;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+
+import fr.umlv.retro.features.FeatureVisitor;
+import fr.umlv.retro.observer.ObserverVisitor;
 
 public class Parser { 
 	
@@ -96,7 +100,7 @@ public class Parser {
 			}
 			return Collections.unmodifiableList(list);
 		}	
-	}	
+	}
 	
 	/**
 	 * Chooses how to parse our path and return the List of ClassReader.
@@ -126,7 +130,25 @@ public class Parser {
 		readers.forEach(r -> r.accept(visitor, ClassReader.EXPAND_FRAMES));
 	}
 	
+	public static void parserWriter(int version, Path path, ObserverVisitor visitor) throws IOException {
+		Objects.requireNonNull(path);
+		Objects.requireNonNull(visitor);
+		
+		List<ClassReader> readers = chooseParser(path);
+		
+		readers.forEach(r -> {
+			ClassWriter cw = new ClassWriter(r, ClassWriter.COMPUTE_MAXS);
+			FeatureVisitor fv = new FeatureVisitor(version, cw, visitor);
+			r.accept(fv, ClassReader.EXPAND_FRAMES);
+			try {
+				change(path, cw.toByteArray());
+			} catch (IOException e) { throw new IOError(e); }
+		});
+		
+	}
+	
 	public static void change(Path path, byte[] bytes) throws IOException {
+		Objects.requireNonNull(path);
 		try(OutputStream out = Files.newOutputStream(path)) {
 			out.write(bytes);
 		}

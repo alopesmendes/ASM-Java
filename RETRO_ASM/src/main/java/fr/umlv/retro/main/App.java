@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.objectweb.asm.Opcodes;
+
 import fr.umlv.retro.observer.ObserverVisitor;
 import fr.umlv.retro.options.MainOpt;
 import fr.umlv.retro.parser.Parser;
@@ -23,7 +25,7 @@ public class App {
     	Path p = getPathOf(args);
     	//ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
     	ObserverVisitor ov = new ObserverVisitor();
-    	Parser.parserRead(p, ov);
+    	Parser.parserWriter(Opcodes.V1_8, p, ov);
     	MainOpt.main(args, ov);
     	//Parser.parserRead(p, ov);
     	//FeatureVisitor fv= new FeatureVisitor(Opcodes.V13, cw, ov);
