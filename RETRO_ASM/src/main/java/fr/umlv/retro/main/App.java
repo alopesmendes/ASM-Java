@@ -13,14 +13,17 @@ import fr.umlv.retro.options.MainOpt;
 
 
 public class App {
+	
+	private static boolean isNotNumber(String str) {
+		return !str.matches("-?(0|[1-9]\\d*)");
+	}
+	
 	private static Path getPathOf(String[] args) {
 		List<String> features = Arrays.asList(new String[]{"TryWithRessources","Lambda","Concatenation","Nestmates","Record"});
-		Optional<String> s = Arrays.stream(args).filter(a -> !a.startsWith("-")).filter(x -> !x.endsWith(",")).filter(x->!features.contains(x)).findFirst();
-		if (s.isEmpty()) {
-			return Path.of("");
-		} else {
-			return Path.of(s.get());
-		}
+		Optional<String> s = Arrays.stream(args).filter(a -> !a.startsWith("-")).filter(App::isNotNumber).
+				filter(x -> !x.endsWith(",")).filter(x->!features.contains(x)).findFirst();
+		if (s.isEmpty()) { return Path.of(""); } 
+		else { return Path.of(s.get()); }
 	}
 	
     public static void main( String[] args ) throws IOException {
