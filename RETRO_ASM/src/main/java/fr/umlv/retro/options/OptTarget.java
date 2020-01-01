@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
+import fr.umlv.retro.features.Concat;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.observer.ObserverVisitor;
 import fr.umlv.retro.parser.Parser;
@@ -38,17 +39,14 @@ public class OptTarget implements Option {
 	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features, Path path) {
 		Objects.requireNonNull(ov);
 		Objects.requireNonNull(features);
-		System.out.println("Option Target avec Version: "+ version +" et Force: "+ force);
-		System.out.println("Réecriture pas encore correctement implémenté car ajout réécriture des features en cours");
-		if (!path.toString().endsWith(".class")) {
-			throw new IllegalArgumentException("Actuellement, ne fonctionne qu'avec des .class");
-		}
-		try {
+		System.out.println("Option Target avec Version: "+ version +" et Force: "+ force+"\nRéecriture pas encore correctement implémenté car ajout réécriture des features en cours");
+		if (!path.toString().endsWith(".class") || !(features.contains(Concat.class) && features.size()==1)) {
+			System.out.println("Actuellement, ne fonctionne qu'avec des .class avec la feature concatenation");
+		}else{try {
 			Parser.parserWriter(version, path, ov);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-
+		}}
 	}
 
 
