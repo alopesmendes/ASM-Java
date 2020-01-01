@@ -36,11 +36,4 @@ public class OptHelp implements Option {
 		return new OptHelp();
 	}
 
-	/**
-	 * determine the features
-	 */
-	@Override
-	public boolean isFeatures() {
-		return false;
-	}
 }

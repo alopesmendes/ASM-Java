@@ -9,13 +9,19 @@ import org.objectweb.asm.Opcodes;
 
 import fr.umlv.retro.features.FeatureVisitor;
 import fr.umlv.retro.observer.ObserverVisitor;
+import fr.umlv.retro.options.MainOpt;
 import fr.umlv.retro.parser.Parser;
 
 public class App {
     public static void main( String[] args ) throws IOException {
     	Path p = Paths.get("../Yo/src/concat/Concat.class");
+    	
+    	
+		
+		
     	ClassWriter cw = new ClassWriter(0);
     	ObserverVisitor ov = new ObserverVisitor();
+    	MainOpt.main(args, ov);
     	//Parser.parserRead(p, ov);
     	FeatureVisitor fv= new FeatureVisitor(Opcodes.V14, cw, ov);
     	

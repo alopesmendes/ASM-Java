@@ -11,5 +11,5 @@ public interface Option {
 	 * Method shared by each option which apply it
 	 * */
 	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features);
-	public boolean isFeatures();
+
 }
