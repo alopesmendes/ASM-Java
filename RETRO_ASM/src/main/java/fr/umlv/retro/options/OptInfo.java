@@ -36,12 +36,6 @@ public class OptInfo implements Option {
 		return new OptInfo();
 	}
 	
-	/**
-	 * determine the features
-	 */
-	@Override
-	public boolean isFeatures() {
-		return false;
-	}
+
 
 }

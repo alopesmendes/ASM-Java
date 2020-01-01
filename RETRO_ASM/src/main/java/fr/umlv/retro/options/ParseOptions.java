@@ -3,6 +3,8 @@ package fr.umlv.retro.options;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.umlv.retro.features.Feature;
+
 public class ParseOptions {
 	
 	/**
@@ -22,18 +24,25 @@ public class ParseOptions {
 		return liste;
 	}
 	
-	public static OptFeatures getFeatures(List<Option> options) {
-		for (Option option : options) {
-			if (option.isFeatures()) {
-				return (OptFeatures) option;
+	
+	public static List<Class<? extends Feature>> parseFeatures(String[] args){
+		List<Class<? extends Feature>> liste = new ArrayList<Class<? extends Feature>>();
+		for (int i = 0; i < args.length; i++) {
+			if (isOptionFeature(args[i])) {
+				liste = OptFeatures.createOptFeatures(parseDescription(i, args)).getListFeatures();
 			}
 		}
-		return null;
+		return liste;
 	}
 	
+
 	
 	private static boolean isOption(String type, OptionMap map) {
 		return map.contains(type);	
+	}
+	
+	private static boolean isOptionFeature(String type){
+		return type.equals("-Features");
 	}
 	
 	private static List<String> parseDescription(int indice,String[] args){

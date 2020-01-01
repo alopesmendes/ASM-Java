@@ -58,12 +58,4 @@ public class OptTarget implements Option {
 		return test;
 	}
 	
-	/**
-	 * determine the features
-	 */
-	@Override
-	public boolean isFeatures() {
-		return false;
-	}
-
 }

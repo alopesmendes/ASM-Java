@@ -9,6 +9,7 @@ import org.objectweb.asm.Opcodes;
 
 import fr.umlv.retro.features.FeatureVisitor;
 import fr.umlv.retro.observer.ObserverVisitor;
+import fr.umlv.retro.options.MainOpt;
 import fr.umlv.retro.parser.Parser;
 
 public class App {
@@ -16,6 +17,7 @@ public class App {
     	Path p = Paths.get("../Yo/src/concat/Concat.class");
     	ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
     	ObserverVisitor ov = new ObserverVisitor();
+    	MainOpt.main(args, ov);
     	//Parser.parserRead(p, ov);
     	FeatureVisitor fv= new FeatureVisitor(Opcodes.V13, cw, ov);
     	
