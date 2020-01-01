@@ -2,6 +2,7 @@ package fr.umlv.retro.observer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,8 +24,8 @@ public class ObserverVisitor extends ClassVisitor {
 	private final ObserverHistory observerHistory = new ObserverHistory();
 	private final FeatureInfoMessage messages = FeatureInfoMessage.create();
 	private String className;
-	private String host = "";
-	private final ArrayList<String> members = new ArrayList<>();
+	private String host;
+	private final HashMap<String, ArrayList<String>> members = new HashMap<>();
 	
 	public ObserverVisitor() {
 		super(Opcodes.ASM7, new ClassWriter(0));
@@ -34,6 +35,8 @@ public class ObserverVisitor extends ClassVisitor {
 	public void visit(int version, int access, String name, String signature, String superName,
 			String[] interfaces) {
 		className = name;
+		String[] array = className.split("/");
+		host = Arrays.stream(array).skip(array.length-1).findFirst().get();
 		if (Feature.detect("java/lang/Record", superName)) {
 			observerHistory.onMessageReceived(Record.class, messages.infoOf(Record.class, name, name));
 		}
@@ -41,20 +44,15 @@ public class ObserverVisitor extends ClassVisitor {
 	}
 	
 	@Override
-	public void visitNestHost(String nestHost) {
-		String[] array = nestHost.split("/");
-		host = Arrays.stream(array).skip(array.length-1).findFirst().get();
-		members.add(className);
-		cv.visitNestHost(nestHost);
-	}
-	
-	@Override
 	public void visitNestMember(String nestMember) {
 		observerHistory.onMessageReceived(Nestmates.class, messages.infoOf(Nestmates.class, nestMember, className, " nestmate of", className));
 		cv.visitNestMember(nestMember);
+		ArrayList<String> m = members.getOrDefault(host, new ArrayList<>());
+		m.add(nestMember);
+		members.put(host, m);
 	}
 	
-	private MethodVisitor methodVisitor(ArrayList<Runnable> list, MethodVisitor methodVisitor,  String methodDescriptor) {
+	private MethodVisitor methodVisitor(MethodVisitor methodVisitor,  String methodDescriptor) {
 		return new MethodVisitor(api, methodVisitor) {		
 			private int line;
 			private String onMethod = "";
@@ -114,17 +112,16 @@ public class ObserverVisitor extends ClassVisitor {
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 			String[] exceptions) {
-		ArrayList<Runnable> list = new ArrayList<>();
-		return 	methodVisitor(list, 
+		return 	methodVisitor( 
 				super.visitMethod(access, name, descriptor, signature, exceptions),
 				name+descriptor);	
 	}
 	
 	private void messageNestMembers() {
-		if (host.isEmpty() || !className.endsWith(host)) {
+		if (host.isEmpty() || members.getOrDefault(host, new ArrayList<>()).isEmpty()) {
 			return;
 		}
-		List<String> m = members.stream().map(x -> x.split("/")).flatMap(x -> Arrays.stream(x).skip(x.length-1)).
+		List<String> m = members.get(host).stream().map(x -> x.split("/")).flatMap(x -> Arrays.stream(x).skip(x.length-1)).
 					collect(Collectors.toList());
 		String n = messages.infoOf(Nestmates.class, host, host, " nest host " + host + " members", m.stream().
 				sorted((x, y) -> y.compareTo(x)).collect(Collectors.toList()).toString());
@@ -135,6 +132,7 @@ public class ObserverVisitor extends ClassVisitor {
 	public void visitEnd() {
 		messageNestMembers();
 		cv.visitEnd();
+		host = "";
 	}
 	
 	/**
