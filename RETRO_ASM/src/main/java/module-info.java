@@ -7,7 +7,8 @@ module retro {
 		fr.umlv.retro.main;
 	
 	exports fr.umlv.retro.parser to 
-		fr.umlv.retro.main;
+		fr.umlv.retro.main,
+		fr.umlv.retro.options;
 	
 	exports fr.umlv.retro.main;
 

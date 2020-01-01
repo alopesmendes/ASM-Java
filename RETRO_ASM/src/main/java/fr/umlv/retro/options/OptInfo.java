@@ -1,13 +1,14 @@
 package fr.umlv.retro.options;
 
+import java.io.IOError;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
-import org.objectweb.asm.ClassVisitor;
-
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.observer.ObserverVisitor;
+import fr.umlv.retro.parser.Parser;
 
 public class OptInfo implements Option {
 
@@ -19,7 +20,11 @@ public class OptInfo implements Option {
 	@Override
 	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
 		System.out.println("Voici les infos");
-		Parser.parserRead(path, ov);
+		try {
+			Parser.parserRead(path, ov);
+		} catch (IOException e) {
+			throw new IOError(e);
+		}
     	if (features.size()==0) {
     		System.out.println(ov.toString());
     	}else {
