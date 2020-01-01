@@ -10,7 +10,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-public class Concatenation implements Feature {
+public class Concat implements Feature {
 	private Consumer<MethodVisitor> begin() {
 		Consumer<MethodVisitor> b =  mv -> {
 			mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(StringBuilder.class));
