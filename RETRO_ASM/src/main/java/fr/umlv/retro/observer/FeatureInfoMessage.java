@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.objectweb.asm.Type;
 
-import fr.umlv.retro.features.Concatenation;
+import fr.umlv.retro.features.Concat;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.features.Lambdas;
 import fr.umlv.retro.features.Nestmates;
@@ -35,13 +35,13 @@ public class FeatureInfoMessage {
 		return Arrays.stream(array).skip(array.length-1).findFirst().get();
 	}
 	
-	private static Function<String[], String> createConcatenationMessage() {
+	private static Function<String[], String> createConcatMessage() {
 		return (args) -> {
 			String cName = className(args[0]);
 			String arg = Arrays.stream(args[3].split("")).map(FeatureInfoMessage::convert).
 						collect(Collectors.joining());
 			return "CONCATENATION at " + cName + "." + 
-					args[1] + " ("+cName+".java:"+args[2]+") pattern "+ arg;
+					args[1] + " ("+cName+".java:"+args[2]+"): pattern "+ arg;
 		};
 	}
 	
@@ -53,7 +53,7 @@ public class FeatureInfoMessage {
 							collect(Collectors.joining());	
 			String l = args[4].substring(0, args[4].length() - 4);
 			return "LAMBDA at " + cName + "." + args[1] + 
-					" ("+cName+".java:"+args[2]+") lambda "+type+" capture ["+capture+"] calling "
+					" ("+cName+".java:"+args[2]+"): lambda "+type+" capture ["+capture+"] calling "
 					+l.replaceFirst(args[0], cName);
 		};
 	}
@@ -63,7 +63,7 @@ public class FeatureInfoMessage {
 			String cName = className(args[0]);
 			String owner = args[3].contains(cName) ? className(args[3]) : args[3];
 			return "TRY_WITH_RESOURCES at " + cName + "." + args[1] + " ("+
-					cName+".java:"+args[2]+") try-with-resources on "+owner;
+					cName+".java:"+args[2]+"): try-with-resources on "+owner;
 		};
 	}
 	
@@ -88,7 +88,7 @@ public class FeatureInfoMessage {
 	
 	public static FeatureInfoMessage create() {
 		HashMap<Class<? extends Feature>, Function<String[], String>> map = new HashMap<>();
-		map.put(Concatenation.class, createConcatenationMessage());
+		map.put(Concat.class, createConcatMessage());
 		map.put(Lambdas.class, createLambdaMessage());
 		map.put(TryWithRessources.class, createTryWithRessourcesMessage());	
 		map.put(Nestmates.class, createNesmateMessage());

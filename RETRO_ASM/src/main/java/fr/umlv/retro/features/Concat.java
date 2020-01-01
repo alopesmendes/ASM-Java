@@ -52,17 +52,17 @@ public class Concat implements Feature {
 	private final Type[] types;
 	private int j;
 
-	private Concatenation(Type[] types, List<String> elements) {
+	private Concat(Type[] types, List<String> elements) {
 		this.types = types;
 		this.elements = new ArrayList<>(elements);
 	}
 
 
-	public static Concatenation create(String description, String s) {
+	public static Concat create(String description, String s) {
 		Type[] types = Type.getArgumentTypes(description);
 		List<String> list = Arrays.stream(s.split(""))
 				.collect(Collectors.toList());
-		return new Concatenation(types, list);
+		return new Concat(types, list);
 	}
 
 	private Consumer<MethodVisitor> ldc(String text) {

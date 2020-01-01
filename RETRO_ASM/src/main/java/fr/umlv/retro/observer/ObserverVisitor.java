@@ -12,7 +12,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import fr.umlv.retro.features.Concatenation;
+import fr.umlv.retro.features.Concat;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.features.Lambdas;
 import fr.umlv.retro.features.Nestmates;
@@ -50,7 +50,7 @@ public class ObserverVisitor extends ClassVisitor {
 	
 	@Override
 	public void visitNestMember(String nestMember) {
-		observerHistory.onMessageReceived(Nestmates.class, messages.infoOf(Nestmates.class, nestMember, className, " nestMate of ", className));
+		observerHistory.onMessageReceived(Nestmates.class, messages.infoOf(Nestmates.class, nestMember, className, " nestmate of", className));
 		cv.visitNestMember(nestMember);
 	}
 	
@@ -58,8 +58,7 @@ public class ObserverVisitor extends ClassVisitor {
 		return new MethodVisitor(api, methodVisitor) {		
 			private int line;
 			private String onMethod = "";
-			private ArrayList<String> owners = new ArrayList<>();
-			private Label end;
+			private boolean isTry;
 			private String msg = "";
 			
 			@Override
@@ -75,7 +74,7 @@ public class ObserverVisitor extends ClassVisitor {
 					
 			@Override
 			public void visitTryCatchBlock(Label start, Label end, Label handler, String type) {
-				this.end = end;	
+				isTry = true;
 				mv.visitTryCatchBlock(start, end, handler, type);
 			}
 			
@@ -83,8 +82,10 @@ public class ObserverVisitor extends ClassVisitor {
 			public void visitMethodInsn(int opcode, String owner, String name, String descriptor,
 					boolean isInterface) {
 			
-				if (msg.equals("close()V") && Feature.detect(name + descriptor, "addSuppressed(Ljava/lang/Throwable;)V")) {
-					owners.add(messages.infoOf(TryWithRessources.class, className, methodDescriptor, line+"", onMethod));
+				if (isTry && msg.equals("close()V") && Feature.detect(name + descriptor, "addSuppressed(Ljava/lang/Throwable;)V")) {
+					String s = messages.infoOf(TryWithRessources.class, className, methodDescriptor, line+"", onMethod);
+					observerHistory.onMessageReceived(TryWithRessources.class, s);
+					isTry = false;
 				}
 				onMethod = owner;
 				msg = name+descriptor;
@@ -92,19 +93,10 @@ public class ObserverVisitor extends ClassVisitor {
 			}
 			
 			@Override
-			public void visitLabel(Label label) {
-				if (label.equals(end)) {
-					owners.add(messages.infoOf(TryWithRessources.class, className, methodDescriptor, line+"", onMethod));
-					owners.stream().forEach(s -> observerHistory.onMessageReceived(TryWithRessources.class, s));	
-				}			
-				mv.visitLabel(label);
-			}
-			
-			@Override
 			public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
 					Object... bootstrapMethodArguments) {
 				if (Feature.detect(name, "makeConcatWithConstants")) {
-					observerHistory.onMessageReceived(Concatenation.class, messages.infoOf(Concatenation.class, className, methodDescriptor, line+"", bootstrapMethodArguments[0].toString()));
+					observerHistory.onMessageReceived(Concat.class, messages.infoOf(Concat.class, className, methodDescriptor, line+"", bootstrapMethodArguments[0].toString()));
 				} else if (Feature.detect(bootstrapMethodHandle.getOwner(), "java/lang/invoke/LambdaMetafactory")) {
 					observerHistory.onMessageReceived(Lambdas.class, messages.infoOf(Lambdas.class, className, methodDescriptor, line+"", descriptor, bootstrapMethodArguments[1].toString()));
 				}
@@ -134,7 +126,8 @@ public class ObserverVisitor extends ClassVisitor {
 		}
 		List<String> m = members.stream().map(x -> x.split("/")).flatMap(x -> Arrays.stream(x).skip(x.length-1)).
 					collect(Collectors.toList());
-		String n = messages.infoOf(Nestmates.class, host, host, " nest host " + host + " members", m.toString());
+		String n = messages.infoOf(Nestmates.class, host, host, " nest host " + host + " members", m.stream().
+				sorted((x, y) -> y.compareTo(x)).collect(Collectors.toList()).toString());
 		observerHistory.onMessageReceived(Nestmates.class, n);
 	}
 
