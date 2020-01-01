@@ -28,7 +28,7 @@ public class App {
     	//ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
     	ObserverVisitor ov = new ObserverVisitor();
     	Parser.parserWriter(Opcodes.V1_8, p, ov);
-    	MainOpt.main(args, ov);
+    	MainOpt.main(args, ov ,p);
     	//Parser.parserRead(p, ov);
     	//FeatureVisitor fv= new FeatureVisitor(Opcodes.V13, cw, ov);
     	
