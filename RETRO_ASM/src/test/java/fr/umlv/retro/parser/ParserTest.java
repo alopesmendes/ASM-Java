@@ -35,32 +35,6 @@ public class ParserTest {
 			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get("../Yo/src/Inexistant"), visitor)),
 			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get("../Inexistant.jar"), visitor))
 		);
-	}
-
-	
-	@Test @Tag("FileClass")
-	public void testParseFileClass() {
-	
-	}
-	
-	@Test @Tag("DirectoryWithoutClass")
-	public void testParseDirectoryWithoutClass() {
-		
-	}
-	
-	@Test @Tag("DirectoryClass")
-	public void testParseDirectoryClass() {
-		
-	}
-	
-	@Test @Tag("JarClass")
-	public void testParseJarClass() {
-		
-	}
-	
-	
-	
-	
-	
+	}	
 	
 }
