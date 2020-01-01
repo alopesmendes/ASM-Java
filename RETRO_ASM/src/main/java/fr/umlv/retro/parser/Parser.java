@@ -130,6 +130,13 @@ public class Parser {
 		readers.forEach(r -> r.accept(visitor, ClassReader.EXPAND_FRAMES));
 	}
 	
+	/**
+	 * Rewrites features according to version.
+	 * @param version
+	 * @param path
+	 * @param visitor
+	 * @throws IOException
+	 */
 	public static void parserWriter(int version, Path path, ObserverVisitor visitor) throws IOException {
 		Objects.requireNonNull(path);
 		Objects.requireNonNull(visitor);
@@ -147,7 +154,7 @@ public class Parser {
 		
 	}
 	
-	public static void change(Path path, byte[] bytes) throws IOException {
+	private static void change(Path path, byte[] bytes) throws IOException {
 		Objects.requireNonNull(path);
 		try(OutputStream out = Files.newOutputStream(path)) {
 			out.write(bytes);

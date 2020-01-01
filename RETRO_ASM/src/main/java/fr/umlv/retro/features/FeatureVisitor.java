@@ -18,6 +18,7 @@ public class FeatureVisitor extends ClassVisitor {
 	private final int version;
 
 	/**
+	 * Constructs a FeatureVisitor with it's version, ClassWriter and ObserverVisitor.
 	 * @param api
 	 * @param observerVisitor
 	 */

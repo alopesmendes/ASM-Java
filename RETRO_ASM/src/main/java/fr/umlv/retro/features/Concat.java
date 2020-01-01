@@ -58,9 +58,14 @@ public class Concat implements Feature {
 	}
 
 
-	public static Concat create(String description, String s) {
+	/**
+	 * @param description
+	 * @param arguments
+	 * @return the Concat created with description and arguments.
+	 */
+	public static Concat create(String description, String arguments) {
 		Type[] types = Type.getArgumentTypes(description);
-		List<String> list = Arrays.stream(s.split(""))
+		List<String> list = Arrays.stream(arguments.split(""))
 				.collect(Collectors.toList());
 		return new Concat(types, list);
 	}

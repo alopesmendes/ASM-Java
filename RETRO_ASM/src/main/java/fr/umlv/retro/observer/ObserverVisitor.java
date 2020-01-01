@@ -137,6 +137,10 @@ public class ObserverVisitor extends ClassVisitor {
 		cv.visitEnd();
 	}
 	
+	/**
+	 * @param typeFeature
+	 * @return the messages according to a type of feature.
+	 */
 	public String displayFeatureHistory(Class<? extends Feature> typeFeature) {
 		return observerHistory.infoOf(typeFeature).stream().collect(Collectors.joining("\n"));
 	}

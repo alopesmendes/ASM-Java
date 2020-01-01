@@ -86,6 +86,9 @@ public class FeatureInfoMessage {
 		};
 	}
 	
+	/**
+	 * @return a FeatureInfoMessage.
+	 */
 	public static FeatureInfoMessage create() {
 		HashMap<Class<? extends Feature>, Function<String[], String>> map = new HashMap<>();
 		map.put(Concat.class, createConcatMessage());
@@ -97,6 +100,11 @@ public class FeatureInfoMessage {
 		return new FeatureInfoMessage(map);
 	}
 	
+	/**
+	 * @param type
+	 * @param args
+	 * @return the message of a type of feature with it's args.
+	 */
 	public String infoOf(Class<? extends Feature> type, String... args) {
 		return map.get(type).apply(args);
 	}
