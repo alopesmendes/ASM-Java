@@ -8,15 +8,16 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.ClassWriter;
+
+import fr.umlv.retro.observer.ObserverVisitor;
 
 
 public class ParserTest {
 	
 	@Test @Tag("parameter")
 	public void testParserWithNullPath() {
-		ClassVisitor visitor = new ClassVisitor(Opcodes.ASM7) { };
+		ObserverVisitor visitor = new ObserverVisitor(new ClassWriter(0));
 		assertThrows(NullPointerException.class, () -> Parser.parserRead(null, visitor));
 	}
 	
@@ -28,7 +29,7 @@ public class ParserTest {
 	
 	@Test @Tag("parameter")
 	public void testInexistantPath() {
-		ClassVisitor visitor = new ClassVisitor(Opcodes.ASM7) { };
+		ObserverVisitor visitor = new ObserverVisitor(new ClassWriter(0));
 		assertAll(
 			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get(" "), visitor)),
 			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get("Inexistant.class"), visitor)),

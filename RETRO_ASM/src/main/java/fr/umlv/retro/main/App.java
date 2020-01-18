@@ -6,10 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-
-
-import fr.umlv.retro.observer.ObserverVisitor;
-import fr.umlv.retro.options.MainOpt;
+import fr.umlv.retro.parser.NoName;
+import fr.umlv.retro.parser.Parser;
 
 
 public class App {
@@ -28,14 +26,8 @@ public class App {
 	
     public static void main( String[] args ) throws IOException {
     	Path p = getPathOf(args);
-    	//ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-    	ObserverVisitor ov = new ObserverVisitor();
-    	MainOpt.main(args, ov ,p);
-    	//Parser.parserRead(p, ov);
-    	//FeatureVisitor fv= new FeatureVisitor(Opcodes.V13, cw, ov);
-    	
-    	//Parser.parserRead(p, ov);
-    	//System.out.println(ov.toString());
-    	//Parser.change(p, cw.toByteArray());
+    	Parser.parser(p, new NoName() {
+		});
+    	//MainOpt.main(args, ov ,p);
     }
 }

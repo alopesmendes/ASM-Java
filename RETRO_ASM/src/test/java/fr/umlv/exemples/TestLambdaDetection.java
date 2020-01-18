@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.objectweb.asm.ClassWriter;
 
 import fr.umlv.retro.features.Lambdas;
 import fr.umlv.retro.observer.ObserverVisitor;
@@ -18,7 +19,7 @@ public class TestLambdaDetection {
 	@Test
 	void testDetectLambda() {
 		Path p = Paths.get("target/test-classes/fr/umlv/exemples/TestLambda.class");
-    	ObserverVisitor ov = new ObserverVisitor();
+    	ObserverVisitor ov = new ObserverVisitor(new ClassWriter(0));
     	
     	try {
 			Parser.parserRead(p, ov);

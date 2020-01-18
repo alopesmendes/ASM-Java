@@ -2,29 +2,76 @@ package fr.umlv.retro.parser;
 
 import java.io.IOError;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 
 import fr.umlv.retro.features.FeatureVisitor;
 import fr.umlv.retro.observer.ObserverVisitor;
 
 public class Parser { 
 	
+	@FunctionalInterface
+	private static interface IOUtils {
+		void execute(int flags);
+		
+	}
 	
+	@FunctionalInterface
+	private static interface ParserWriter {
+		void write(int version, int flags);
+		
+		static ParserWriter writeFile(Path path) {
+			return (version, flags) -> {
+				try {
+					ClassReader classReader = parserFile(path);
+					ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
+					FeatureVisitor visitor = new FeatureVisitor(version, new ObserverVisitor(classWriter));
+					classReader.accept(visitor, ClassReader.EXPAND_FRAMES);
+					Files.write(path, classWriter.toByteArray());
+				} catch (IOException e) { throw new IOError(e); }
+			};
+		}
+		
+		static ParserWriter writeEntry(ZipOutputStream zOutputStream, Entry<ZipEntry, byte[]> entry) {
+			return (version, flags) -> {
+				try {
+					byte[] bytes;
+					if (isClassFile(entry.getKey())) {
+						ClassReader classReader = new ClassReader(entry.getValue());
+						ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
+						FeatureVisitor featureVisitor = new FeatureVisitor(version, new ObserverVisitor(classWriter));
+						classReader.accept(featureVisitor, ClassReader.EXPAND_FRAMES);
+						bytes = classWriter.toByteArray();
+						
+					} else {
+						bytes = entry.getValue();
+					}
+					ZipEntry zipEntry = new ZipEntry(entry.getKey().getName());
+					zOutputStream.putNextEntry(zipEntry);
+					zOutputStream.write(bytes);
+					zOutputStream.closeEntry();
+				} catch (IOException e) {
+					throw new IOError(e);
+				}
+			};
+		}
+	} 
 	
 	/**
 	 * Parser a path into a byte array. 
@@ -72,16 +119,34 @@ public class Parser {
 	 * @return List of ClassReader according to a Directory.
 	 * @throws IOException
 	 */
-	private static List<ClassReader> parserDirectory(Path path) throws IOException {
+	private static List<ParserWriter> parserDirectory(Path path) throws IOException {
 		try(Stream<Path> list = Files.list(path)) {
-			return list.filter(Parser::isClassFile).map(t -> {
-				try { return parserFile(t); } 
-				catch (IOException e) { throw new IOError(e); }
-			}).collect(Collectors.toUnmodifiableList());
+			return 	list.filter(Parser::isClassFile).map(p -> ParserWriter.writeFile(p)).
+					collect(Collectors.toList());
 		}
 	}
 	
+	private static byte[] valueOf(ZipFile zipFile, ZipEntry entry) {
+		try {
+			return zipFile.getInputStream(entry).readAllBytes();
+		} catch (IOException e) {
+			throw new IOError(e);
+		}
+	}
 	
+	private static Map<ZipEntry, byte[]> elementsOfZip(Path path) throws ZipException, IOException {
+		try (ZipFile zipFile = new ZipFile(path.toFile())) {
+			return zipFile.stream().collect(Collectors.toMap((ZipEntry x) -> x, (ZipEntry y) -> valueOf(zipFile, y)));
+		}	
+	}
+	
+	private static void rewriteZipEntry(ZipOutputStream zOutputStream, Entry<ZipEntry, byte[]> entry) {
+		/*zOutputStream.putNextEntry(entry.getKey());
+		zOutputStream.write(entry.getValue());
+		zOutputStream.closeEntry();*/
+		var w = ParserWriter.writeEntry(zOutputStream, entry);
+		w.write(Opcodes.V13, 0);
+	}
 
 	/**
 	 * Creates a List of ClassReader each ClassReader relied to a class file.
@@ -89,17 +154,13 @@ public class Parser {
 	 * @return List of ClassReader according to a jar.
 	 * @throws IOException
 	 */
-	private static List<ClassReader> parserJar(Path path) throws IOException {
-		ArrayList<ClassReader> list = new ArrayList<>();
-		try (InputStream in = Files.newInputStream(path); 
-			ZipInputStream zip = new ZipInputStream(in)) {
-			
-			for (ZipEntry jar = zip.getNextEntry(); jar != null; jar = zip.getNextEntry()) {
-				if (!(isClassFile(jar))) { continue; }
-				list.add(new ClassReader(zip));
-			}
-			return Collections.unmodifiableList(list);
-		}	
+	private static List<ParserWriter> parserJar(Path path) throws IOException {
+		var h = elementsOfZip(path);
+		try(OutputStream out = Files.newOutputStream(path);
+			ZipOutputStream zOutputStream = new ZipOutputStream(out)) {
+			h.entrySet().stream().forEach(e -> rewriteZipEntry(zOutputStream, e));
+		}			
+		return new ArrayList<>();
 	}
 	
 	/**
@@ -108,10 +169,10 @@ public class Parser {
 	 * @return List of ClassReader.
 	 * @throws IOException
 	 */
-	private static List<ClassReader> chooseParser(Path path) throws IOException {
+	private static List<ParserWriter> chooseParser(Path path) throws IOException {
 		if (!Files.isDirectory(path)) {
 			if (path.toString().endsWith(".jar")) { return parserJar(path); }
-			else { return List.of(parserFile(path)); }
+			else { return List.of(ParserWriter.writeFile(path)); }
 		} 
 		else { return parserDirectory(path); }
 	}
@@ -122,12 +183,12 @@ public class Parser {
 	 * @param visitor
 	 * @throws IOException
 	 */
-	public static void parserRead(Path path, ClassVisitor visitor) throws IOException {
+	public static void parserRead(Path path, ObserverVisitor visitor) throws IOException {
 		Objects.requireNonNull(path);
 		Objects.requireNonNull(visitor);
 		
-		List<ClassReader> readers = chooseParser(path);
-		readers.forEach(r -> r.accept(visitor, ClassReader.EXPAND_FRAMES));
+		List<ParserWriter> readers = chooseParser(path);
+		readers.forEach(r -> r.write(Opcodes.V13, 0));
 	}
 	
 	/**
@@ -141,24 +202,14 @@ public class Parser {
 		Objects.requireNonNull(path);
 		Objects.requireNonNull(visitor);
 		
-		List<ClassReader> readers = chooseParser(path);
-		
-		readers.forEach(r -> {
-			ClassWriter cw = new ClassWriter(r, ClassWriter.COMPUTE_MAXS);
-			FeatureVisitor fv = new FeatureVisitor(version, cw, visitor);
-			r.accept(fv, ClassReader.EXPAND_FRAMES);
-			try {
-				change(path, cw.toByteArray());
-			} catch (IOException e) { throw new IOError(e); }
-		});
-		
 	}
 	
-	private static void change(Path path, byte[] bytes) throws IOException {
+	public static void parser(Path path, NoName noName, ParsingOptions...options) throws IOException {
 		Objects.requireNonNull(path);
-		try(OutputStream out = Files.newOutputStream(path)) {
-			out.write(bytes);
-		}
+		Objects.requireNonNull(noName);
+		Objects.requireNonNull(options);
+		List<ParserWriter> readers = chooseParser(path);
+		readers.forEach(r -> r.write(Opcodes.V13, 0));
 	}
 
 }

@@ -27,8 +27,8 @@ public class ObserverVisitor extends ClassVisitor {
 	private String host;
 	private final HashMap<String, ArrayList<String>> members = new HashMap<>();
 	
-	public ObserverVisitor() {
-		super(Opcodes.ASM7, new ClassWriter(0));
+	public ObserverVisitor(ClassWriter cw) {
+		super(Opcodes.ASM7, cw);
 	}
 	
 	@Override
@@ -98,7 +98,7 @@ public class ObserverVisitor extends ClassVisitor {
 				} else if (Feature.detect(bootstrapMethodHandle.getOwner(), "java/lang/invoke/LambdaMetafactory")) {
 					observerHistory.onMessageReceived(Lambdas.class, messages.infoOf(Lambdas.class, className, methodDescriptor, line+"", descriptor, bootstrapMethodArguments[1].toString()));
 				}
-				//mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
+				mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
 			}
 			
 			@Override

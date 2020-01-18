@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.objectweb.asm.ClassWriter;
 
 import fr.umlv.retro.features.Nestmates;
 import fr.umlv.retro.features.TryWithRessources;
@@ -20,7 +21,7 @@ public class TestDetectTry {
 	@Test
 	void testDetectLambda() {
 		Path p = Paths.get("target/test-classes/fr/umlv/exemples");
-    	ObserverVisitor ov = new ObserverVisitor();
+    	ObserverVisitor ov = new ObserverVisitor(new ClassWriter(0));
     	
     	try {
 			Parser.parserRead(p, ov);
