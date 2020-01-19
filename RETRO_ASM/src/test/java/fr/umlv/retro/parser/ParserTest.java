@@ -8,33 +8,28 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.objectweb.asm.ClassWriter;
-
-import fr.umlv.retro.observer.ObserverVisitor;
 
 
 public class ParserTest {
 	
 	@Test @Tag("parameter")
 	public void testParserWithNullPath() {
-		ObserverVisitor visitor = new ObserverVisitor(new ClassWriter(0));
-		assertThrows(NullPointerException.class, () -> Parser.parserRead(null, visitor));
+		assertThrows(NullPointerException.class, () -> Parser.parse(null, NoName.create()));
 	}
 	
 	@Test  @Tag("parameter")
 	public void testParserWithNullVisitor() {
 		
-		assertThrows(NullPointerException.class, () -> Parser.parserRead(Paths.get("../yo.jar"), null));
+		assertThrows(NullPointerException.class, () -> Parser.parse(Paths.get("../yo.jar"), null));
 	}
 	
 	@Test @Tag("parameter")
 	public void testInexistantPath() {
-		ObserverVisitor visitor = new ObserverVisitor(new ClassWriter(0));
 		assertAll(
-			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get(" "), visitor)),
-			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get("Inexistant.class"), visitor)),
-			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get("../Yo/src/Inexistant"), visitor)),
-			() -> assertThrows(IOException.class, () -> Parser.parserRead(Paths.get("../Inexistant.jar"), visitor))
+			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get(" "), NoName.create())),
+			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("Inexistant.class"), NoName.create())),
+			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("../Yo/src/Inexistant"), NoName.create())),
+			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("../Inexistant.jar"), NoName.create()))
 		);
 	}	
 	

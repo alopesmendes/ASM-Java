@@ -54,7 +54,7 @@ public interface NoName {
 		
 		private void executeDirectory(Path path, ParsingOptions...options) throws IOException {
 			try (Stream<Path> paths = Files.list(path)) {
-				paths.filter(ParserV2::isClassFile).forEach(p -> {
+				paths.filter(Parser::isClassFile).forEach(p -> {
 					try {
 						executeFile(p, options);
 					} catch (IOException e) { throw new IOError(e); }
@@ -63,7 +63,7 @@ public interface NoName {
 		}
 		
 		private byte[] byteOf(ZipInputStream zipInputStream, ZipEntry entry) throws IOException {
-			if (ParserV2.isClassFile(entry)) {
+			if (Parser.isClassFile(entry)) {
 				ClassReader classReader = map.get(entry.toString());
 				ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
 				FeatureVisitor featureVisitor = FeatureVisitor.create(new ObserverVisitor(classWriter));
@@ -115,7 +115,7 @@ public interface NoName {
 		public void execute(Path path, ParsingOptions... options) throws IOException {
 			Objects.requireNonNull(path);
 			Objects.requireNonNull(List.of(options));
-			if (ParserV2.isClassFile(path)) {
+			if (Parser.isClassFile(path)) {
 				executeFile(path, options); 
 			} else if (path.toString().endsWith(".jar")) {
 				executeJar(path, options);

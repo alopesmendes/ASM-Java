@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import fr.umlv.retro.parser.NoName;
-import fr.umlv.retro.parser.ParserV2;
+import fr.umlv.retro.parser.Parser;
 
 
 public class App {
@@ -26,7 +26,7 @@ public class App {
 	
     public static void main( String[] args ) throws IOException {
     	Path path = getPathOf(args);
-    	ParserV2.parse(path, NoName.create());
+    	Parser.parse(path, NoName.create());
     	//MainOpt.main(args, ov ,p);
     }
 }
