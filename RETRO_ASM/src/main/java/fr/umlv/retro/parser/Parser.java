@@ -28,7 +28,7 @@ public class Parser {
 	
 	@FunctionalInterface
 	private static interface IOUtils {
-		void execute(int flags);
+		void execute(Path path, NoName noName, ParsingOptions... options);
 		
 	}
 	
@@ -41,7 +41,7 @@ public class Parser {
 				try {
 					ClassReader classReader = parserFile(path);
 					ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
-					FeatureVisitor visitor = new FeatureVisitor(version, new ObserverVisitor(classWriter));
+					FeatureVisitor visitor = FeatureVisitor.create(new ObserverVisitor(classWriter));
 					classReader.accept(visitor, ClassReader.EXPAND_FRAMES);
 					Files.write(path, classWriter.toByteArray());
 				} catch (IOException e) { throw new IOError(e); }
@@ -55,7 +55,7 @@ public class Parser {
 					if (isClassFile(entry.getKey())) {
 						ClassReader classReader = new ClassReader(entry.getValue());
 						ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
-						FeatureVisitor featureVisitor = new FeatureVisitor(version, new ObserverVisitor(classWriter));
+						FeatureVisitor featureVisitor = FeatureVisitor.create(new ObserverVisitor(classWriter));
 						classReader.accept(featureVisitor, ClassReader.EXPAND_FRAMES);
 						bytes = classWriter.toByteArray();
 						
