@@ -14,7 +14,7 @@ public class ParserTest {
 	
 	@Test @Tag("parameter")
 	public void testParserWithNullPath() {
-		assertThrows(NullPointerException.class, () -> Parser.parse(null, NoName.create()));
+		assertThrows(NullPointerException.class, () -> Parser.parse(null, PathOperation.create()));
 	}
 	
 	@Test  @Tag("parameter")
@@ -26,10 +26,10 @@ public class ParserTest {
 	@Test @Tag("parameter")
 	public void testInexistantPath() {
 		assertAll(
-			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get(" "), NoName.create())),
-			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("Inexistant.class"), NoName.create())),
-			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("../Yo/src/Inexistant"), NoName.create())),
-			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("../Inexistant.jar"), NoName.create()))
+			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get(" "), PathOperation.create())),
+			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("Inexistant.class"), PathOperation.create())),
+			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("../Yo/src/Inexistant"), PathOperation.create())),
+			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("../Inexistant.jar"), PathOperation.create()))
 		);
 	}	
 	

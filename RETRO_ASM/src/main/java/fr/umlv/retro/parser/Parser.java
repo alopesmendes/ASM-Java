@@ -16,7 +16,7 @@ import org.objectweb.asm.ClassReader;
 public class Parser {
 	@FunctionalInterface
 	private static interface IOUtils {
-		void execute(Path path, NoName noName, ParsingOptions... options);
+		void execute(Path path, PathOperation noName, ParsingOptions... options);
 	}
 	
 	/**
@@ -45,7 +45,7 @@ public class Parser {
 		};
 	}
 	
-	private static void parsingEntry(Path path, ZipInputStream zStream, NoName noName, ParsingOptions...options) throws IOException {
+	private static void parsingEntry(Path path, ZipInputStream zStream, PathOperation noName, ParsingOptions...options) throws IOException {
 		for (ZipEntry entry = zStream.getNextEntry(); entry != null; entry = zStream.getNextEntry()) {
 			if (!isClassFile(entry)) { continue; }
 			noName.stock(entry.toString(), new ClassReader(zStream));
@@ -61,14 +61,14 @@ public class Parser {
 		};
 	}
 	
-	private static void parsingDirectory(Path dir, NoName noName, ParsingOptions...options) throws IOException {
+	private static void parsingDirectory(Path dir, PathOperation noName, ParsingOptions...options) throws IOException {
 		IOUtils ioUtils = parsingFile();
 		try(Stream<Path> paths = Files.list(dir)) {
 			paths.filter(p -> Parser.isClassFile(p) || p.toString().endsWith(".jar")).forEach(path -> ioUtils.execute(path, noName, options));
 		}
 	}
 	
-	private static void chooseParser(Path path, NoName noName, ParsingOptions...options) throws IOException {
+	private static void chooseParser(Path path, PathOperation noName, ParsingOptions...options) throws IOException {
 		if (!Files.isDirectory(path)) {
 			if (!isClassFile(path)) {
 				parsingJar().execute(path, noName, options);
@@ -76,7 +76,7 @@ public class Parser {
 		} else { parsingDirectory(path, noName, options); }
 	}
 	
-	private static void requires(Path path, NoName noName, ParsingOptions...options) {
+	private static void requires(Path path, PathOperation noName, ParsingOptions...options) {
 		Objects.requireNonNull(path);
 		Objects.requireNonNull(noName);
 		Objects.requireNonNull(List.of(options));
@@ -85,7 +85,7 @@ public class Parser {
 		}
 	}
 		
-	public static void parse(Path path, NoName noName, ParsingOptions...options) throws IOException {
+	public static void parse(Path path, PathOperation noName, ParsingOptions...options) throws IOException {
 		requires(path, noName, options);
 		chooseParser(path, noName, options);
 		noName.execute(path, options);

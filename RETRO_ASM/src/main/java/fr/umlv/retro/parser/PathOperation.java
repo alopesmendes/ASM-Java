@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,18 +24,36 @@ import org.objectweb.asm.ClassWriter;
 import fr.umlv.retro.features.FeatureVisitor;
 import fr.umlv.retro.observer.ObserverVisitor;
 
-public interface NoName {
+public interface PathOperation {
+	/**
+	 * Stocks according to a name of a .class it's classReader.
+	 * @param name
+	 * @param classReader
+	 */
 	void stock(String name, ClassReader classReader); 
 	
+	/**
+	 * Managed by the given options.
+	 * Executes all the operations in the given path.
+	 * The path can only be a directory, a file .class and a jar.
+	 * @param path
+	 * @param options
+	 * @throws IOException
+	 */
 	void execute(Path path, ParsingOptions...options) throws IOException;
 	
-	static NoName create() {
+	/**
+	 * @return all the featureVisitor created after execute.
+	 */
+	List<FeatureVisitor> allFeatures();
+	
+	static PathOperation create() {
 		return new NoNameImpl();
 	}
 
-	static class NoNameImpl implements NoName {
+	static class NoNameImpl implements PathOperation {
 		private final HashMap<String, ClassReader> map = new HashMap<>();
-		
+		private final ArrayList<FeatureVisitor> features = new ArrayList<>();
 		@Override
 		public void stock(String name, ClassReader classReader) {
 			Objects.requireNonNull(name);
@@ -42,12 +61,18 @@ public interface NoName {
 			map.put(name, classReader);		
 		}
 		
+		private ClassWriter executeClass(String name, ParsingOptions...options) {
+			ClassReader classReader = map.get(name);
+			ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
+			FeatureVisitor featureVisitor = FeatureVisitor.create(new ObserverVisitor(classWriter), options);
+			classReader.accept(featureVisitor, ClassReader.EXPAND_FRAMES);
+			features.add(featureVisitor);
+			return classWriter;
+		}
+		
 		private void executeFile(Path path, ParsingOptions...options) throws IOException {
 			try(InputStream in = Files.newInputStream(path)) {
-				ClassReader classReader = map.get(path.toString());
-				ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
-				FeatureVisitor featureVisitor = FeatureVisitor.create(new ObserverVisitor(classWriter), options);
-				classReader.accept(featureVisitor, ClassReader.EXPAND_FRAMES);
+				ClassWriter classWriter = executeClass(path.toString(), options);
 				Files.write(path, classWriter.toByteArray());
 			}
 		}
@@ -62,25 +87,22 @@ public interface NoName {
 			}
 		}
 		
-		private byte[] byteOf(ZipInputStream zipInputStream, ZipEntry entry) throws IOException {
+		private byte[] byteOf(ZipInputStream zipInputStream, ZipEntry entry, ParsingOptions...options) throws IOException {
 			if (Parser.isClassFile(entry)) {
-				ClassReader classReader = map.get(entry.toString());
-				ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
-				FeatureVisitor featureVisitor = FeatureVisitor.create(new ObserverVisitor(classWriter));
-				classReader.accept(featureVisitor, ClassReader.EXPAND_FRAMES);
+				ClassWriter classWriter = executeClass(entry.getName(), options);
 				return classWriter.toByteArray();
 			}
 			return new ZipInputStream(zipInputStream).readAllBytes();
 		}
 		
-		private Map<ZipEntry, byte[]> mappingEntry(ZipInputStream zipInputStream) throws IOException {
+		private Map<ZipEntry, byte[]> mappingEntry(ZipInputStream zipInputStream, ParsingOptions...options) throws IOException {
 			return Stream.iterate(zipInputStream.getNextEntry(), p -> p != null, p -> {
 				try {
 					return p = zipInputStream.getNextEntry();
 				} catch (IOException e) { throw new IOError(e); }
 			}).collect(Collectors.toMap((ZipEntry x) -> x, (ZipEntry y) -> {
 				try {
-					return byteOf(zipInputStream, y);
+					return byteOf(zipInputStream, y, options);
 				} catch (IOException e) { throw new IOError(e); }
 			}));
 		}
@@ -92,8 +114,8 @@ public interface NoName {
 			zStream.closeEntry();
 		}
 		
-		private void executeEntry(Path path, ZipInputStream zipInputStream) throws IOException {
-			Map<ZipEntry, byte[]> entries = mappingEntry(zipInputStream);
+		private void executeEntry(Path path, ZipInputStream zipInputStream, ParsingOptions...options) throws IOException {
+			Map<ZipEntry, byte[]> entries = mappingEntry(zipInputStream, options);
 			try(OutputStream out = Files.newOutputStream(path);
 				ZipOutputStream zStream = new ZipOutputStream(out)) {
 				entries.entrySet().forEach(entry -> {
@@ -107,7 +129,7 @@ public interface NoName {
 		private void executeJar(Path path, ParsingOptions...options) throws IOException {
 			try(InputStream in = Files.newInputStream(path);
 				ZipInputStream zipInputStream = new ZipInputStream(in)) {
-				executeEntry(path, zipInputStream);
+				executeEntry(path, zipInputStream, options);
 			}
 		}
 		
@@ -120,6 +142,11 @@ public interface NoName {
 			} else if (path.toString().endsWith(".jar")) {
 				executeJar(path, options);
 			} else { executeDirectory(path, options); }	
+		}
+
+		@Override
+		public List<FeatureVisitor> allFeatures() {
+			return features;
 		}
 		
 	}

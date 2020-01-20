@@ -13,7 +13,7 @@ import org.objectweb.asm.ClassWriter;
 
 import fr.umlv.retro.features.Lambdas;
 import fr.umlv.retro.observer.ObserverVisitor;
-import fr.umlv.retro.parser.NoName;
+import fr.umlv.retro.parser.PathOperation;
 import fr.umlv.retro.parser.Parser;
 
 public class TestLambdaDetection {
@@ -23,7 +23,7 @@ public class TestLambdaDetection {
     	ObserverVisitor ov = new ObserverVisitor(new ClassWriter(0));
     	
     	try {
-			Parser.parse(p, NoName.create());
+			Parser.parse(p, PathOperation.create());
 		} catch (IOException e) {
 			throw new AssertionError(e);
 		}

@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import fr.umlv.retro.parser.NoName;
+import fr.umlv.retro.parser.PathOperation;
 import fr.umlv.retro.parser.Parser;
 
 
@@ -26,7 +26,7 @@ public class App {
 	
     public static void main( String[] args ) throws IOException {
     	Path path = getPathOf(args);
-    	Parser.parse(path, NoName.create());
+    	Parser.parse(path, PathOperation.create());
     	//MainOpt.main(args, ov ,p);
     }
 }

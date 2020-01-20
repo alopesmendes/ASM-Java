@@ -9,7 +9,7 @@ import java.util.Objects;
 import fr.umlv.retro.features.Concat;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.observer.ObserverVisitor;
-import fr.umlv.retro.parser.NoName;
+import fr.umlv.retro.parser.PathOperation;
 import fr.umlv.retro.parser.Parser;
 
 public class OptTarget implements Option {
@@ -44,7 +44,7 @@ public class OptTarget implements Option {
 		if (!path.toString().endsWith(".class") || !(features.contains(Concat.class) && features.size()==1)) {
 			System.out.println("Actuellement, ne fonctionne qu'avec des .class avec la feature concatenation");
 		}else{try {
-			Parser.parse(path, NoName.create());
+			Parser.parse(path, PathOperation.create());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}}
