@@ -7,9 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.jar.JarInputStream;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.objectweb.asm.ClassReader;
 
@@ -37,57 +37,100 @@ public class Parser {
 		return !zipEntry.isDirectory() && zipEntry.getName().endsWith(".class");
 	}
 	
+	/**
+	 * Creates a IOUtils that will stock a .class.
+	 * @return IOUtils to parserFile.
+	 */
 	private static IOUtils parsingFile() {
-		return (path, noName, options) -> { 
+		return (path, pOperation, options) -> { 
 			try (InputStream in = Files.newInputStream(path)) {
-				noName.stock(path.toString(), new ClassReader(in));
+				pOperation.stock(path.toString(), new ClassReader(in));
 			} catch (IOException e) { throw new IOError(e); }
 		};
 	}
 	
-	private static void parsingEntry(Path path, ZipInputStream zStream, PathOperation noName, ParsingOptions...options) throws IOException {
-		for (ZipEntry entry = zStream.getNextEntry(); entry != null; entry = zStream.getNextEntry()) {
+	/**
+	 * Stocks every .class of a jar and it's classReader.
+	 * @param path
+	 * @param jStream
+	 * @param pOperation
+	 * @param options
+	 * @throws IOException
+	 */
+	private static void parsingEntry(Path path, JarInputStream jStream, PathOperation pOperation, ParsingOptions...options) throws IOException {
+		for (ZipEntry entry = jStream.getNextEntry(); entry != null; entry = jStream.getNextEntry()) {
 			if (!isClassFile(entry)) { continue; }
-			noName.stock(entry.toString(), new ClassReader(zStream));
+			pOperation.stock(entry.toString(), new ClassReader(jStream));
 		}
 	}
 	
+	/**
+	 * Parses every Entry of a jar.
+	 * @return IOUtils of jar.
+	 */
 	private static IOUtils parsingJar() {
-		return (path, noName, options) -> {
+		return (path, pOperation, options) -> {
 			try(InputStream in = Files.newInputStream(path);
-				ZipInputStream zStream = new ZipInputStream(in)) {
-				parsingEntry(path, zStream, noName, options);
+				JarInputStream jStream = new JarInputStream(in)) {
+				parsingEntry(path, jStream, pOperation, options);
 			} catch (IOException e) { throw new IOError(e); }
 		};
 	}
 	
-	private static void parsingDirectory(Path dir, PathOperation noName, ParsingOptions...options) throws IOException {
+	/**
+	 * Parses every .class or .jar of a given directory.
+	 * @param dir
+	 * @param pOperation
+	 * @param options
+	 * @throws IOException
+	 */
+	private static void parsingDirectory(Path dir, PathOperation pOperation, ParsingOptions...options) throws IOException {
 		IOUtils ioUtils = parsingFile();
 		try(Stream<Path> paths = Files.list(dir)) {
-			paths.filter(p -> Parser.isClassFile(p) || p.toString().endsWith(".jar")).forEach(path -> ioUtils.execute(path, noName, options));
+			paths.filter(p -> Parser.isClassFile(p) || p.toString().endsWith(".jar")).forEach(path -> ioUtils.execute(path, pOperation, options));
 		}
 	}
 	
-	private static void chooseParser(Path path, PathOperation noName, ParsingOptions...options) throws IOException {
+	/**
+	 * Chooses which parsing method it should use.
+	 * @param path
+	 * @param pOperation
+	 * @param options
+	 * @throws IOException
+	 */
+	private static void chooseParser(Path path, PathOperation pOperation, ParsingOptions...options) throws IOException {
 		if (!Files.isDirectory(path)) {
 			if (!isClassFile(path)) {
-				parsingJar().execute(path, noName, options);
-			} else { parsingFile().execute(path, noName, options); }
-		} else { parsingDirectory(path, noName, options); }
+				parsingJar().execute(path, pOperation, options);
+			} else { parsingFile().execute(path, pOperation, options); }
+		} else { parsingDirectory(path, pOperation, options); }
 	}
 	
-	private static void requires(Path path, PathOperation noName, ParsingOptions...options) {
+	/**
+	 * Verify's every requirement necessary to start parsing.
+	 * @param path
+	 * @param pOperation
+	 * @param options
+	 */
+	private static void requires(Path path, PathOperation pOperation, ParsingOptions...options) {
 		Objects.requireNonNull(path);
-		Objects.requireNonNull(noName);
+		Objects.requireNonNull(pOperation);
 		Objects.requireNonNull(List.of(options));
 		if (!Files.isDirectory(path) && !isClassFile(path) && !path.toString().endsWith(".jar")) {
 			throw new IllegalArgumentException("path as to be a .class or a directory or a jar");
 		}
 	}
 		
-	public static void parse(Path path, PathOperation noName, ParsingOptions...options) throws IOException {
-		requires(path, noName, options);
-		chooseParser(path, noName, options);
-		noName.execute(path, options);
+	/**
+	 * Parses path and executes.
+	 * @param path
+	 * @param pOperation
+	 * @param options
+	 * @throws IOException
+	 */
+	public static void parse(Path path, PathOperation pOperation, ParsingOptions...options) throws IOException {
+		requires(path, pOperation, options);
+		chooseParser(path, pOperation, options);
+		pOperation.execute(path, options);
 	}
 }

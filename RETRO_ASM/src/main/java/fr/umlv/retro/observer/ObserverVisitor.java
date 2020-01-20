@@ -46,10 +46,10 @@ public class ObserverVisitor extends ClassVisitor {
 	@Override
 	public void visitNestMember(String nestMember) {
 		observerHistory.onMessageReceived(Nestmates.class, messages.infoOf(Nestmates.class, nestMember, className, " nestmate of", className));
-		cv.visitNestMember(nestMember);
 		ArrayList<String> m = members.getOrDefault(host, new ArrayList<>());
 		m.add(nestMember);
 		members.put(host, m);
+		cv.visitNestMember(nestMember);
 	}
 	
 	private MethodVisitor methodVisitor(MethodVisitor methodVisitor,  String methodDescriptor) {
@@ -113,7 +113,7 @@ public class ObserverVisitor extends ClassVisitor {
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 			String[] exceptions) {
 		return 	methodVisitor( 
-				super.visitMethod(access, name, descriptor, signature, exceptions),
+				cv.visitMethod(access, name, descriptor, signature, exceptions),
 				name+descriptor);	
 	}
 	

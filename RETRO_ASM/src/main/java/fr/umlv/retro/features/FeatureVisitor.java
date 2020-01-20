@@ -1,6 +1,7 @@
 package fr.umlv.retro.features;
 
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -16,29 +17,46 @@ public class FeatureVisitor extends ClassVisitor {
 	 * @param api
 	 * @param observerVisitor
 	 */
-	private FeatureVisitor(ObserverVisitor observerVisitor) {
-		super(Opcodes.ASM7, observerVisitor);
+	private FeatureVisitor(ClassWriter classWriter, ObserverVisitor observerVisitor) {
+		super(Opcodes.ASM7, classWriter);
 		this.observerVisitor = observerVisitor;
 	}
 	
-	public static FeatureVisitor create(ObserverVisitor observerVisitor, ParsingOptions...options) {
-		return new FeatureVisitor(observerVisitor);
+	/**
+	 * Creates a featureVisitor.
+	 * @param observerVisitor
+	 * @param options
+	 * @return the featureVisitor.
+	 */
+	public static FeatureVisitor create(ClassWriter cw, ObserverVisitor observerVisitor, ParsingOptions...options) {
+		return new FeatureVisitor(cw, observerVisitor);
 	}
 	
 	
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		//observerVisitor.visit(version, access, name, signature, superName, interfaces);
+		observerVisitor.visit(version, access, name, signature, superName, interfaces);
 		cv.visit(version, access, name, signature, superName, interfaces);
 	}
 	
 	private MethodVisitor rewriteFeatures(String n, MethodVisitor methodVisitor) {
 		return new MethodVisitor(api, methodVisitor) {
 			
+			
+			@Override
+			public void visitCode() {
+				mv.visitCode();
+			}
+			
 			@Override
 			public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
 					Object... bootstrapMethodArguments) {
-				//mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
+				mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
+			}
+			
+			@Override
+			public void visitEnd() {
+				mv.visitEnd();
 			}
 		};
 	}
@@ -46,16 +64,17 @@ public class FeatureVisitor extends ClassVisitor {
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 			String[] exceptions) {
-		MethodVisitor mv = rewriteFeatures(name, cv.visitMethod(access, name, descriptor, signature, exceptions));
-		mv = rewriteFeatures(name, mv);
-		System.out.println(name+"{"+observerVisitor+"}");
+		MethodVisitor mv = rewriteFeatures(name, observerVisitor.visitMethod(access, name, descriptor, signature, exceptions));
+		mv = rewriteFeatures(name, cv.visitMethod(access, name, descriptor, signature, exceptions));
+		
 		return mv;
 	}
 	
 	@Override
 	public void visitEnd() {
+		observerVisitor.visitEnd();
 		cv.visitEnd();
-		System.out.println("end:{\n"+observerVisitor+"\n}");
+		System.out.println(observerVisitor);
 	}
 	
 	@Override

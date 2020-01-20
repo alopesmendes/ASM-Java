@@ -15,8 +15,8 @@ import org.objectweb.asm.ClassWriter;
 import fr.umlv.retro.features.Nestmates;
 import fr.umlv.retro.features.TryWithRessources;
 import fr.umlv.retro.observer.ObserverVisitor;
-import fr.umlv.retro.parser.PathOperation;
 import fr.umlv.retro.parser.Parser;
+import fr.umlv.retro.parser.PathOperation;
 
 public class TestDetectTry {
 	@Test

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: fr.umlv.exemples.Concat
+Class-Path: .
+
