@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.observer.ObserverVisitor;
-import fr.umlv.retro.parser.NoName;
+import fr.umlv.retro.parser.PathOperation;
 import fr.umlv.retro.parser.Parser;
 
 public class OptInfo implements Option {
@@ -22,7 +22,7 @@ public class OptInfo implements Option {
 	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
 		System.out.println("Voici les infos");
 		try {
-			Parser.parse(path, NoName.create());
+			Parser.parse(path, PathOperation.create());
 		} catch (IOException e) {
 			throw new IOError(e);
 		}if (features.size()==0) {
