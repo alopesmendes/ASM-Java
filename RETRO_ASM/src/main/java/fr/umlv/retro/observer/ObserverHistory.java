@@ -31,9 +31,16 @@ public class ObserverHistory implements Observer {
 		values.get(type).get().add(msg);
 	}
 	
+	/**
+	 * @param typeFeature
+	 * @return all the information of a type.
+	 */
+	public HashSet<String> infoOf(Class<? extends Feature> typeFeature) {
+		return values.get(typeFeature).get();
+	}
+	
 	@Override
 	public String toString() {
-		
 		return 	set.stream().map(e -> values.get(e).get()).
 				flatMap(l -> l.stream()).collect(Collectors.joining("\n"));
 	}

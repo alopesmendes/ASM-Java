@@ -5,29 +5,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
 
-public class Parser { 
-	
-	/**
-	 * Parser a path into a byte array. 
-	 * @param path
-	 * @return array of byte according to path.
-	 * @throws IOException 
-	 */
-	private static byte[] parsingPathToByte(Path path) throws IOException {
-		return Files.readAllBytes(path);
-		
+public class Parser {
+	@FunctionalInterface
+	private static interface IOUtils {
+		void execute(Path path, PathOperation noName, ParsingOptions... options);
 	}
 	
 	/**
@@ -35,7 +24,7 @@ public class Parser {
 	 * @param path
 	 * @return true if is .class
 	 */
-	private static boolean isClassFile(Path path) {
+	static boolean isClassFile(Path path) {
 		return !Files.isDirectory(path) && path.toString().endsWith(".class");
 	}
 	
@@ -44,83 +33,61 @@ public class Parser {
 	 * @param zipEntry
 	 * @return true if is .class
 	 */
-	private static boolean isClassFile(ZipEntry zipEntry) {
+	static boolean isClassFile(ZipEntry zipEntry) {
 		return !zipEntry.isDirectory() && zipEntry.getName().endsWith(".class");
 	}
 	
-	/**
-	 * Creates the ClassReader according to a class file.
-	 * @param path
-	 * @return ClassReader corresponding to file.
-	 * @throws IOException
-	 */
-	private static ClassReader parserFile(Path path) throws IOException {
-		return new ClassReader(parsingPathToByte(path));		
+	private static IOUtils parsingFile() {
+		return (path, noName, options) -> { 
+			try (InputStream in = Files.newInputStream(path)) {
+				noName.stock(path.toString(), new ClassReader(in));
+			} catch (IOException e) { throw new IOError(e); }
+		};
 	}
 	
-
-	/**
-	 * Creates a List of ClassReader each ClassReader relied to a class file.
-	 * @param path
-	 * @return List of ClassReader according to a Directory.
-	 * @throws IOException
-	 */
-	private static List<ClassReader> parserDirectory(Path path) throws IOException {
-		try(Stream<Path> list = Files.list(path)) {
-			return list.filter(Parser::isClassFile).map(t -> {
-				try { return parserFile(t); } 
-				catch (IOException e) { throw new IOError(e); }
-			}).collect(Collectors.toUnmodifiableList());
+	private static void parsingEntry(Path path, ZipInputStream zStream, PathOperation noName, ParsingOptions...options) throws IOException {
+		for (ZipEntry entry = zStream.getNextEntry(); entry != null; entry = zStream.getNextEntry()) {
+			if (!isClassFile(entry)) { continue; }
+			noName.stock(entry.toString(), new ClassReader(zStream));
 		}
 	}
 	
+	private static IOUtils parsingJar() {
+		return (path, noName, options) -> {
+			try(InputStream in = Files.newInputStream(path);
+				ZipInputStream zStream = new ZipInputStream(in)) {
+				parsingEntry(path, zStream, noName, options);
+			} catch (IOException e) { throw new IOError(e); }
+		};
+	}
 	
-
-	/**
-	 * Creates a List of ClassReader each ClassReader relied to a class file.
-	 * @param path
-	 * @return List of ClassReader according to a jar.
-	 * @throws IOException
-	 */
-	private static List<ClassReader> parserJar(Path path) throws IOException {
-		ArrayList<ClassReader> list = new ArrayList<>();
-		try (InputStream in = Files.newInputStream(path); 
-			ZipInputStream zip = new ZipInputStream(in)) {
-			
-			for (ZipEntry jar = zip.getNextEntry(); jar != null; jar = zip.getNextEntry()) {
-				if (!(isClassFile(jar))) { continue; }
-				list.add(new ClassReader(zip));
-			}
-			return Collections.unmodifiableList(list);
-		}	
-	}	
+	private static void parsingDirectory(Path dir, PathOperation noName, ParsingOptions...options) throws IOException {
+		IOUtils ioUtils = parsingFile();
+		try(Stream<Path> paths = Files.list(dir)) {
+			paths.filter(p -> Parser.isClassFile(p) || p.toString().endsWith(".jar")).forEach(path -> ioUtils.execute(path, noName, options));
+		}
+	}
 	
-	/**
-	 * Chooses how to parse our path and return the List of ClassReader.
-	 * @param path
-	 * @return List of ClassReader.
-	 * @throws IOException
-	 */
-	private static List<ClassReader> chooseParser(Path path) throws IOException {
+	private static void chooseParser(Path path, PathOperation noName, ParsingOptions...options) throws IOException {
 		if (!Files.isDirectory(path)) {
-			if (path.toString().endsWith(".jar")) { return parserJar(path); }
-			else { return List.of(parserFile(path)); }
-		} 
-		else { return parserDirectory(path); }
+			if (!isClassFile(path)) {
+				parsingJar().execute(path, noName, options);
+			} else { parsingFile().execute(path, noName, options); }
+		} else { parsingDirectory(path, noName, options); }
 	}
 	
-	/**
-	 * Parses a given path and only reads.
-	 * @param path
-	 * @param visitor
-	 * @throws IOException
-	 */
-	public static void parserRead(Path path, ClassVisitor visitor) throws IOException {
+	private static void requires(Path path, PathOperation noName, ParsingOptions...options) {
 		Objects.requireNonNull(path);
-		Objects.requireNonNull(visitor);
-		
-		List<ClassReader> readers = chooseParser(path);
-		readers.forEach(r -> r.accept(visitor, ClassReader.EXPAND_FRAMES));
+		Objects.requireNonNull(noName);
+		Objects.requireNonNull(List.of(options));
+		if (!Files.isDirectory(path) && !isClassFile(path) && !path.toString().endsWith(".jar")) {
+			throw new IllegalArgumentException("path as to be a .class or a directory or a jar");
+		}
 	}
-
+		
+	public static void parse(Path path, PathOperation noName, ParsingOptions...options) throws IOException {
+		requires(path, noName, options);
+		chooseParser(path, noName, options);
+		noName.execute(path, options);
+	}
 }
