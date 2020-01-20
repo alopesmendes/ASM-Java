@@ -1,0 +1,140 @@
+/*Fabien LAMBERT--DELAVAQUERIE Exam Web*/
+
+*{
+  /*Mise en place éléments par défaut (margin, font)*/
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Verdana";
+}
+
+nav{
+  /*Dimensions du menu*/
+  width: 1000px;
+  height: 60px;
+  margin: 0 auto;
+}
+
+nav ul{
+  display: flex;/*Je pose un conteneur flexible*/
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+nav ul li{
+  max-height: 60px;
+  text-align: center;
+  border: 1px solid #000;
+  width: 33%;
+  background: #EEE;
+  z-index: 1;/*On force le z-index à 1*/
+  border-radius:8px 8px 0 0;
+}
+
+nav ul li:hover{
+  /*Changement Background du menu sur lequel on pointe (ACCUEIL, COMMANDER, A PROPOS ou CONTACTER)*/
+  background: #EFAE00;
+}
+
+nav ul li a{
+  display: block;
+  padding: 19px 0; /*padding en haut et en bas de 19-> 38px*/
+  font-size: 18px; /*Texte de police 18px + margin + border = 58px<60 et empeche les décalage à l'affichage du sous menu*/
+  text-decoration: none;
+  color: #000;
+}
+
+
+
+form{
+  /*Formulaire */
+  width: 1000px;
+  margin: 0 auto;
+  border: 1px solid #000;
+  padding: 50px 100px;
+}
+
+form *{
+  /*On force le z-index à 0 pour que le sous menu de Accueil passe devant quand il s'affiche*/
+  z-index: 0;
+}
+
+form label{
+  /*On prend 20% de la largeur du formulaire pour les intitulés avec le texte aligné à droite*/
+  width: 20%;
+  display: inline-block;
+  text-align: right;
+}
+
+form input[type="text"], form select{
+  /*On met 79% de largeur sinon avec la bordure on dépasse et les inputs et selects passent a la ligne*/
+  width: 79% 
+
+}
+
+form input[type="text"]{
+  margin: 5px 0;
+}
+
+form input[type="submit"]{
+  /*Bouton de validation*/
+  margin-left: 20%;
+  margin-top : 20px; 
+}
+
+footer{
+    position:fixed;/*On force à toujours avoir le footer en bas de page*/
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #555;
+    color: white;
+    text-align:center;
+    padding: 20px;
+}
+
+
+/*Partie responsive*/
+@media screen and (max-width: 1000px){
+  /*Ecrans de moins de 1000px de largeur*/
+  /*On doit modifier nav et form auxquels on a donné en largeur initial 1000px 
+  ils prennent alors simplement 100% de la largeur dispo*/
+
+  nav{
+    width:100%;
+  }
+  form{
+    width: 100%;
+  }
+  footer {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 800px){
+  /*Ecrans de moins de 800px de largeur*/
+  /*On n'affiche plus label/input ou label/select sur une seule ligne et on aligne donc le texte de nouveau a gauche*/
+  form label,
+  form input[type="text"],
+  form select{
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+@media screen and (max-width: 550px){
+  /*Ecrans de moins de 550px de largeur*/
+  nav{
+    /*La navigation prend height:auto car on va devoir afficher les ul en block et ne seront plus alignés, leur hauteur s'adaptera*/
+    height: auto;
+  }
+  footer{
+    height: auto;
+  }
+  nav ul{
+    display: block;
+  }
+  nav ul li{
+    width: 100%;
+    border-radius:0;
+  }
+}
