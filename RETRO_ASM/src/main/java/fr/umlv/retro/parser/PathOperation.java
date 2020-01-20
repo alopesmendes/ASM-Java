@@ -61,6 +61,12 @@ public interface PathOperation {
 			map.put(name, classReader);		
 		}
 		
+		/**
+		 * Add a new FeatureVisitor to features and return a classWriter.
+		 * @param name
+		 * @param options
+		 * @return the classWriter create with options.
+		 */
 		private ClassWriter executeClass(String name, ParsingOptions...options) {
 			ClassReader classReader = map.get(name);
 			ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
@@ -70,6 +76,12 @@ public interface PathOperation {
 			return classWriter;
 		}
 		
+		/**
+		 * Executes a file.
+		 * @param path
+		 * @param options
+		 * @throws IOException
+		 */
 		private void executeFile(Path path, ParsingOptions...options) throws IOException {
 			try(InputStream in = Files.newInputStream(path)) {
 				ClassWriter classWriter = executeClass(path.toString(), options);
@@ -77,16 +89,33 @@ public interface PathOperation {
 			}
 		}
 		
+		/**
+		 * Executes all the files .class or .jar of a directory.
+		 * @param path
+		 * @param options
+		 * @throws IOException
+		 */
 		private void executeDirectory(Path path, ParsingOptions...options) throws IOException {
 			try (Stream<Path> paths = Files.list(path)) {
-				paths.filter(Parser::isClassFile).forEach(p -> {
+				paths.filter(p -> Parser.isClassFile(p) || p.toString().endsWith(".jar")).forEach(p -> {
 					try {
-						executeFile(p, options);
+						if (Parser.isClassFile(path)) {
+							executeFile(p, options);
+						} else { executeJar(path, options); }
 					} catch (IOException e) { throw new IOError(e); }
 				});
 			}
 		}
 		
+		/**
+		 * If entry is a .class return the byte array of the corresponding ClassWriter.
+		 * Otherwise creates a new ZipInputStream from zipInputStream and reads all bytes.
+		 * @param zipInputStream
+		 * @param entry
+		 * @param options
+		 * @return the an byte array.
+		 * @throws IOException
+		 */
 		private byte[] byteOf(ZipInputStream zipInputStream, ZipEntry entry, ParsingOptions...options) throws IOException {
 			if (Parser.isClassFile(entry)) {
 				ClassWriter classWriter = executeClass(entry.getName(), options);
@@ -95,6 +124,13 @@ public interface PathOperation {
 			return new ZipInputStream(zipInputStream).readAllBytes();
 		}
 		
+		/**
+		 * Creates a Map with as key every zipEntry and their byte array.
+		 * @param zipInputStream
+		 * @param options
+		 * @return a map of ZipEntry and byte[].
+		 * @throws IOException
+		 */
 		private Map<ZipEntry, byte[]> mappingEntry(ZipInputStream zipInputStream, ParsingOptions...options) throws IOException {
 			return Stream.iterate(zipInputStream.getNextEntry(), p -> p != null, p -> {
 				try {
@@ -107,29 +143,48 @@ public interface PathOperation {
 			}));
 		}
 		
-		private void putInOutputStream(Entry<ZipEntry, byte[]> e, ZipOutputStream zStream) throws IOException {
+		/**
+		 * Writes the entry in zStream.
+		 * @param e
+		 * @param zStream
+		 * @throws IOException
+		 */
+		private void write(Entry<ZipEntry, byte[]> e, ZipOutputStream zStream) throws IOException {
 			ZipEntry zipEntry = new ZipEntry(e.getKey().getName());
 			zStream.putNextEntry(zipEntry);
 			zStream.write(e.getValue());
 			zStream.closeEntry();
 		}
 		
-		private void executeEntry(Path path, ZipInputStream zipInputStream, ParsingOptions...options) throws IOException {
+		/**
+		 * Executes all the entry of a jar.
+		 * @param path
+		 * @param zipInputStream
+		 * @param options
+		 * @throws IOException
+		 */
+		private void executeInsideJar(Path path, ZipInputStream zipInputStream, ParsingOptions...options) throws IOException {
 			Map<ZipEntry, byte[]> entries = mappingEntry(zipInputStream, options);
 			try(OutputStream out = Files.newOutputStream(path);
 				ZipOutputStream zStream = new ZipOutputStream(out)) {
 				entries.entrySet().forEach(entry -> {
 					try {
-						putInOutputStream(entry, zStream);
+						write(entry, zStream);
 					} catch (IOException e) { throw new IOError(e); }
 				});
 			}
 		}
 		
+		/**
+		 * Executes the jar.
+		 * @param path
+		 * @param options
+		 * @throws IOException
+		 */
 		private void executeJar(Path path, ParsingOptions...options) throws IOException {
 			try(InputStream in = Files.newInputStream(path);
 				ZipInputStream zipInputStream = new ZipInputStream(in)) {
-				executeEntry(path, zipInputStream, options);
+				executeInsideJar(path, zipInputStream, options);
 			}
 		}
 		
