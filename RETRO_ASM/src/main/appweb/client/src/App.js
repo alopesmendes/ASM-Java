@@ -1,21 +1,21 @@
 import React from 'react';
+import './App.css';
 import './style.css';
-import {Form} from 'react';
+import Header from './Components/Header.js';
+import Footer from './Components/Footer.js';
+/*import HowUseIt from './Components/HowUseIt.js';*/
+import Form from './Components/Form.js';
 
 function App() {
+
   return (
     <div className="App">
-        <header>
-                <nav>
-                     <ul>
-                        <li><a href="#">HOME</a></li>
-
-                    </ul>
-                </nav>
-        </header>
-    </div>,
-    <Form />
-
+        <Header />
+        <div className="FormContainer">
+            <Form />
+         </div>
+        <Footer />
+    </div>
   );
 }
 
