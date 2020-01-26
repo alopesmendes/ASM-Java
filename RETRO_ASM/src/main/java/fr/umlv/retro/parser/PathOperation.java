@@ -23,7 +23,6 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 import fr.umlv.retro.features.FeatureVisitor;
-import fr.umlv.retro.observer.ObserverVisitor;
 
 public interface PathOperation {
 	/**
@@ -71,7 +70,7 @@ public interface PathOperation {
 		private ClassWriter executeClass(String name, ParsingOptions...options) {
 			ClassReader classReader = map.get(name);
 			ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
-			FeatureVisitor featureVisitor = FeatureVisitor.create(classWriter, new ObserverVisitor(classWriter), options);
+			FeatureVisitor featureVisitor = FeatureVisitor.create(classWriter, options);
 			classReader.accept(featureVisitor, ClassReader.EXPAND_FRAMES);
 			features.add(featureVisitor);
 			return classWriter;

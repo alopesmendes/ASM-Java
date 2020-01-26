@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -27,8 +26,8 @@ public class ObserverVisitor extends ClassVisitor {
 	private String host;
 	private final HashMap<String, ArrayList<String>> members = new HashMap<>();
 	
-	public ObserverVisitor(ClassWriter cw) {
-		super(Opcodes.ASM7, cw);
+	public ObserverVisitor(ClassVisitor cv) {
+		super(Opcodes.ASM7, cv);
 	}
 	
 	@Override
@@ -58,10 +57,17 @@ public class ObserverVisitor extends ClassVisitor {
 			private String onMethod = "";
 			private boolean isTry;
 			private String msg = "";
+			private int var;
 			
 			@Override
 			public void visitCode() {
 				mv.visitCode();
+			}
+			
+			@Override
+			public void visitVarInsn(int opcode, int var) {
+				mv.visitVarInsn(opcode, var);
+				this.var = Math.max(this.var, var);
 			}
 			
 			@Override
@@ -95,10 +101,14 @@ public class ObserverVisitor extends ClassVisitor {
 					Object... bootstrapMethodArguments) {
 				if (Feature.detect(name, "makeConcatWithConstants")) {
 					observerHistory.onMessageReceived(Concat.class, messages.infoOf(Concat.class, className, methodDescriptor, line+"", bootstrapMethodArguments[0].toString()));
+					Concat concat = Concat.create(var, mv, descriptor, bootstrapMethodArguments);
+					concat.execute();
+					return;
 				} else if (Feature.detect(bootstrapMethodHandle.getOwner(), "java/lang/invoke/LambdaMetafactory")) {
 					observerHistory.onMessageReceived(Lambdas.class, messages.infoOf(Lambdas.class, className, methodDescriptor, line+"", descriptor, bootstrapMethodArguments[1].toString()));
 				}
 				mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
+				
 			}
 			
 			@Override
@@ -112,9 +122,11 @@ public class ObserverVisitor extends ClassVisitor {
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 			String[] exceptions) {
-		return 	methodVisitor( 
-				cv.visitMethod(access, name, descriptor, signature, exceptions),
-				name+descriptor);	
+		var mv = 	methodVisitor(
+					cv.visitMethod(access, name, descriptor, signature, exceptions),
+					name+descriptor);	
+	
+		return mv;
 	}
 	
 	private void messageNestMembers() {
