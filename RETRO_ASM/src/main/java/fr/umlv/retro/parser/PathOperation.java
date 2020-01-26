@@ -99,9 +99,9 @@ public interface PathOperation {
 			try (Stream<Path> paths = Files.list(path)) {
 				paths.filter(p -> Parser.isClassFile(p) || p.toString().endsWith(".jar")).forEach(p -> {
 					try {
-						if (Parser.isClassFile(path)) {
+						if (Parser.isClassFile(p)) {
 							executeFile(p, options);
-						} else { executeJar(path, options); }
+						} else { executeJar(p, options); }
 					} catch (IOException e) { throw new IOError(e); }
 				});
 			}

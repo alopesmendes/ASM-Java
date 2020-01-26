@@ -101,14 +101,12 @@ public class ObserverVisitor extends ClassVisitor {
 					Object... bootstrapMethodArguments) {
 				if (Feature.detect(name, "makeConcatWithConstants")) {
 					observerHistory.onMessageReceived(Concat.class, messages.infoOf(Concat.class, className, methodDescriptor, line+"", bootstrapMethodArguments[0].toString()));
-					Concat concat = Concat.create(var, mv, descriptor, bootstrapMethodArguments);
-					concat.execute();
+					Concat.create(var, mv, descriptor, bootstrapMethodArguments).execute();;
 					return;
 				} else if (Feature.detect(bootstrapMethodHandle.getOwner(), "java/lang/invoke/LambdaMetafactory")) {
 					observerHistory.onMessageReceived(Lambdas.class, messages.infoOf(Lambdas.class, className, methodDescriptor, line+"", descriptor, bootstrapMethodArguments[1].toString()));
 				}
 				mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
-				
 			}
 			
 			@Override

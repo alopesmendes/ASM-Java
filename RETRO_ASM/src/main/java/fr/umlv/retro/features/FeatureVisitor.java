@@ -47,7 +47,6 @@ public class FeatureVisitor extends ClassVisitor {
 	@Override
 	public void visitEnd() {
 		cv.visitEnd();
-		System.out.println(observerVisitor);
 	}
 	
 	@Override
