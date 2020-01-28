@@ -25,9 +25,11 @@ public class ObserverVisitor extends ClassVisitor {
 	private String className;
 	private String host;
 	private final HashMap<String, ArrayList<String>> members = new HashMap<>();
+	private final Record record;
 	
 	public ObserverVisitor(ClassVisitor cv) {
 		super(Opcodes.ASM7, cv);
+		record = new Record(api, cv);
 	}
 	
 	@Override
@@ -39,7 +41,8 @@ public class ObserverVisitor extends ClassVisitor {
 		if (Feature.detect("java/lang/Record", superName)) {
 			observerHistory.onMessageReceived(Record.class, messages.infoOf(Record.class, name, name));
 		}
-		cv.visit(version, access, name, signature, superName, interfaces);
+		//cv.visit(version, access, name, signature, superName, interfaces);
+		record.visit(version, access, name, signature, superName, interfaces);
 	}
 	
 	@Override
@@ -48,7 +51,8 @@ public class ObserverVisitor extends ClassVisitor {
 		ArrayList<String> m = members.getOrDefault(host, new ArrayList<>());
 		m.add(nestMember);
 		members.put(host, m);
-		cv.visitNestMember(nestMember);
+		//cv.visitNestMember(nestMember);
+		record.visitNestMember(nestMember);
 	}
 	
 	private MethodVisitor methodVisitor(MethodVisitor methodVisitor,  String methodDescriptor) {
@@ -121,7 +125,8 @@ public class ObserverVisitor extends ClassVisitor {
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 			String[] exceptions) {
 		var mv = 	methodVisitor(
-					cv.visitMethod(access, name, descriptor, signature, exceptions),
+					//cv.visitMethod(access, name, descriptor, signature, exceptions),
+					record.visitMethod(access, name, descriptor, signature, exceptions),
 					name+descriptor);	
 	
 		return mv;
@@ -141,7 +146,8 @@ public class ObserverVisitor extends ClassVisitor {
 	@Override
 	public void visitEnd() {
 		messageNestMembers();
-		cv.visitEnd();
+		//cv.visitEnd();
+		record.visitEnd();
 		host = "";
 	}
 	

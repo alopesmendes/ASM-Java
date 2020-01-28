@@ -52,8 +52,7 @@ public class Concat  implements Feature {
 		} else { mv.visitVarInsn(Opcodes.ALOAD, start+i); }
 	}
 	 
-	private void begin() {
-		IntStream.range(0, argumentsTypes.length).forEach(i -> store(argumentsTypes.length-1-i));
+	static void begin(MethodVisitor mv) {
 		mv.visitTypeInsn(Opcodes.NEW, Type.getInternalName(StringBuilder.class));
 		mv.visitInsn(Opcodes.DUP);
 		try {
@@ -66,7 +65,7 @@ public class Concat  implements Feature {
 	
 	
 	
-	private void append(Type t) {
+	static void append(Type t, MethodVisitor mv) {
 		if (!(t.equals(Type.INT_TYPE) || t.equals(Type.BOOLEAN_TYPE) || t.equals(Type.BYTE_TYPE) || t.equals(Type.LONG_TYPE) ||
 			t.equals(Type.DOUBLE_TYPE) || t.equals(Type.FLOAT_TYPE) || t.equals(Type.CHAR_TYPE) || t.equals(Type.getType(String.class)))) {
 			t = Type.getType(Object.class);
@@ -78,7 +77,7 @@ public class Concat  implements Feature {
 		
 	}
 
-	private void end() {
+	static void end(MethodVisitor mv) {
 		mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, 
 				Type.getInternalName(StringBuilder.class),
 				"toString", "()Ljava/lang/String;", false);
@@ -86,17 +85,17 @@ public class Concat  implements Feature {
 	}
 
 
-	private void ldc(String text) {
+	static void ldc(String text, MethodVisitor mv) {
 		mv.visitLdcInsn(text);
+		append(Type.getType(String.class), mv);
 	}
 	
 	private void apply(String text) {
 		if (text.equals("\u0001")) {
 			load(index);
-			append(argumentsTypes[index++]);
+			append(argumentsTypes[index++], mv);
 		} else {
-			ldc(text);
-			append(Type.getType(String.class));
+			ldc(text, mv);
 		}
 	}
 	
@@ -105,9 +104,10 @@ public class Concat  implements Feature {
 	}
 
 	public void execute() {
-		begin();
+		IntStream.range(0, argumentsTypes.length).forEach(i -> store(argumentsTypes.length-1-i));
+		begin(mv);
 		buildString();
-		end();
+		end(mv);
 		
 		
 	}
