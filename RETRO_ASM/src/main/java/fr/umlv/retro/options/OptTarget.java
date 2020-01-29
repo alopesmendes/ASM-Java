@@ -6,18 +6,15 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
-import fr.umlv.retro.features.Concat;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.observer.ObserverVisitor;
-import fr.umlv.retro.parser.PathOperation;
-import fr.umlv.retro.parser.Parser;
 
 public class OptTarget implements Option {
 	private final int version;
 	private final boolean force;
 	
 	/**
-	 * @param version
+	 * @param args
 	 */
 	private OptTarget(List<String> args) {
 		Objects.requireNonNull(args);
@@ -38,7 +35,7 @@ public class OptTarget implements Option {
 	 */
 	@Override
 	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features, Path path) {
-		Objects.requireNonNull(ov);
+		/*Objects.requireNonNull(ov);
 		Objects.requireNonNull(features);
 		System.out.println("Option Target avec Version: "+ version +" et Force: "+ force+"\nRéecriture pas encore correctement implémenté car ajout réécriture des features en cours");
 		if (!path.toString().endsWith(".class") || !(features.contains(Concat.class) && features.size()==1)) {
@@ -47,9 +44,22 @@ public class OptTarget implements Option {
 			Parser.parse(path, PathOperation.create());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}}
+		}}*/
 	}
 
+	@Override
+	public boolean isTarget() {
+		return false;
+	}
+
+	@Override
+	public int getVersion() {
+		return version;
+	}
+
+	public boolean isForce() {
+		return force;
+	}
 
 	/**
 	 * Method of creation of an OptTarget

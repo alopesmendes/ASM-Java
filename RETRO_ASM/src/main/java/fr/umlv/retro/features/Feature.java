@@ -1,5 +1,7 @@
 package fr.umlv.retro.features;
 
+import org.objectweb.asm.ClassVisitor;
+
 public interface Feature {
 	
 	/**
@@ -10,4 +12,12 @@ public interface Feature {
 	static boolean detect(String origin, String feature) {
 		return origin.equals(feature);
 	}
+	
+	static ClassVisitor createWriterFeauture(int api, ClassVisitor classVisitor) {
+		ClassVisitor visitor = new Nestmates(api, classVisitor);
+		visitor = new Concat(api, visitor);
+		visitor = new Record(api, visitor);
+		return visitor;
+	}
+	
 }

@@ -1,22 +1,7 @@
 package fr.umlv.exemples;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.objectweb.asm.ClassWriter;
-
-import fr.umlv.retro.features.Lambdas;
-import fr.umlv.retro.observer.ObserverVisitor;
-import fr.umlv.retro.parser.Parser;
-import fr.umlv.retro.parser.PathOperation;
-
 public class TestLambdaDetection {
-	//@Test
+	/*@Test
 	void testDetectLambda() {
 		Path p = Paths.get("target/test-classes/fr/umlv/exemples/TestLambda.class");
     	ObserverVisitor ov = new ObserverVisitor(new ClassWriter(0));
@@ -35,5 +20,5 @@ public class TestLambdaDetection {
     			"LAMBDA at TestLambda.testMethodRef2()V (TestLambda.java:32): lambda java/util/function/BiFunction capture [] calling java/lang/Integer.sum(II)I",
     			"LAMBDA at TestLambda.testMethodRef3()V (TestLambda.java:41): lambda java/util/function/IntUnaryOperator capture [] calling TestLambda.methodRef(D)B");
     	assertEquals(set, ov.displayFeatureHistory(Lambdas.class).lines().collect(Collectors.toSet()));
-	}
+	}*/
 }

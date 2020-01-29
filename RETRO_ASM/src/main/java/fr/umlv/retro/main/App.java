@@ -6,8 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import fr.umlv.retro.parser.PathOperation;
+import fr.umlv.retro.options.OptionParsing;
 import fr.umlv.retro.parser.Parser;
+import fr.umlv.retro.parser.PathOperation;
 
 
 public class App {
@@ -26,7 +27,9 @@ public class App {
 	
     public static void main( String[] args ) throws IOException {
     	Path path = getPathOf(args);
-    	Parser.parse(path, PathOperation.create());
+    	PathOperation operation  = PathOperation.create();
+    	OptionParsing options = OptionParsing.create(args);
+    	Parser.parse(path, operation, options);
     	//MainOpt.main(args, ov ,p);
     }
 }

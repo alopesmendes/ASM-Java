@@ -23,6 +23,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 import fr.umlv.retro.features.FeatureVisitor;
+import fr.umlv.retro.options.OptionParsing;
 
 public interface PathOperation {
 	/**
@@ -40,7 +41,7 @@ public interface PathOperation {
 	 * @param options
 	 * @throws IOException
 	 */
-	void execute(Path path, ParsingOptions...options) throws IOException;
+	void execute(Path path, OptionParsing options) throws IOException;
 	
 	/**
 	 * @return all the featureVisitor created after execute.
@@ -67,7 +68,7 @@ public interface PathOperation {
 		 * @param options
 		 * @return the classWriter create with options.
 		 */
-		private ClassWriter executeClass(String name, ParsingOptions...options) {
+		private ClassWriter executeClass(String name, OptionParsing options) {
 			ClassReader classReader = map.get(name);
 			ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
 			FeatureVisitor featureVisitor = FeatureVisitor.create(classWriter, options);
@@ -82,7 +83,7 @@ public interface PathOperation {
 		 * @param options
 		 * @throws IOException
 		 */
-		private void executeFile(Path path, ParsingOptions...options) throws IOException {
+		private void executeFile(Path path, OptionParsing options) throws IOException {
 			try(InputStream in = Files.newInputStream(path)) {
 				ClassWriter classWriter = executeClass(path.toString(), options);
 				Files.write(path, classWriter.toByteArray());
@@ -95,7 +96,7 @@ public interface PathOperation {
 		 * @param options
 		 * @throws IOException
 		 */
-		private void executeDirectory(Path path, ParsingOptions...options) throws IOException {
+		private void executeDirectory(Path path, OptionParsing options) throws IOException {
 			try (Stream<Path> paths = Files.list(path)) {
 				paths.filter(p -> Parser.isClassFile(p) || p.toString().endsWith(".jar")).forEach(p -> {
 					try {
@@ -116,7 +117,7 @@ public interface PathOperation {
 		 * @return the an byte array.
 		 * @throws IOException
 		 */
-		private byte[] byteOf(JarInputStream jarInputStream, ZipEntry entry, ParsingOptions...options) throws IOException {
+		private byte[] byteOf(JarInputStream jarInputStream, ZipEntry entry, OptionParsing options) throws IOException {
 			if (Parser.isClassFile(entry)) {
 				ClassWriter classWriter = executeClass(entry.getName(), options);
 				return classWriter.toByteArray();
@@ -131,7 +132,7 @@ public interface PathOperation {
 		 * @return a map of ZipEntry and byte[].
 		 * @throws IOException
 		 */
-		private Map<ZipEntry, byte[]> mappingEntry(JarInputStream jarInputStream, ParsingOptions...options) throws IOException {
+		private Map<ZipEntry, byte[]> mappingEntry(JarInputStream jarInputStream, OptionParsing options) throws IOException {
 			return Stream.iterate(jarInputStream.getNextEntry(), p -> p != null, p -> {
 				try {
 					return p = jarInputStream.getNextEntry();
@@ -163,7 +164,7 @@ public interface PathOperation {
 		 * @param options
 		 * @throws IOException
 		 */
-		private void executeInsideJar(Path path, JarInputStream jarInputStream, ParsingOptions...options) throws IOException {
+		private void executeInsideJar(Path path, JarInputStream jarInputStream, OptionParsing options) throws IOException {
 			Map<ZipEntry, byte[]> entries = mappingEntry(jarInputStream, options);
 			try(OutputStream out = Files.newOutputStream(path);
 				JarOutputStream zStream = new JarOutputStream(out, jarInputStream.getManifest())) {
@@ -181,7 +182,7 @@ public interface PathOperation {
 		 * @param options
 		 * @throws IOException
 		 */
-		private void executeJar(Path path, ParsingOptions...options) throws IOException {
+		private void executeJar(Path path, OptionParsing options) throws IOException {
 			try(InputStream in = Files.newInputStream(path);
 				JarInputStream jarInputStream = new JarInputStream(in)) {
 				executeInsideJar(path, jarInputStream, options);
@@ -189,7 +190,7 @@ public interface PathOperation {
 		}
 		
 		@Override
-		public void execute(Path path, ParsingOptions... options) throws IOException {
+		public void execute(Path path, OptionParsing options) throws IOException {
 			Objects.requireNonNull(path);
 			Objects.requireNonNull(List.of(options));
 			if (Parser.isClassFile(path)) {

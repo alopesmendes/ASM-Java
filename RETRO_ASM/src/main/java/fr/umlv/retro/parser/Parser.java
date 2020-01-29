@@ -13,10 +13,12 @@ import java.util.zip.ZipEntry;
 
 import org.objectweb.asm.ClassReader;
 
+import fr.umlv.retro.options.OptionParsing;
+
 public class Parser {
 	@FunctionalInterface
 	private static interface IOUtils {
-		void execute(Path path, PathOperation noName, ParsingOptions... options);
+		void execute(Path path, PathOperation noName, OptionParsing options);
 	}
 	
 	/**
@@ -57,7 +59,7 @@ public class Parser {
 	 * @param options
 	 * @throws IOException
 	 */
-	private static void parsingEntry(Path path, JarInputStream jStream, PathOperation pOperation, ParsingOptions...options) throws IOException {
+	private static void parsingEntry(Path path, JarInputStream jStream, PathOperation pOperation, OptionParsing options) throws IOException {
 		for (ZipEntry entry = jStream.getNextEntry(); entry != null; entry = jStream.getNextEntry()) {
 			if (!isClassFile(entry)) { continue; }
 			pOperation.stock(entry.toString(), new ClassReader(jStream));
@@ -84,7 +86,7 @@ public class Parser {
 	 * @param options
 	 * @throws IOException
 	 */
-	private static void parsingDirectory(Path dir, PathOperation pOperation, ParsingOptions...options) throws IOException {
+	private static void parsingDirectory(Path dir, PathOperation pOperation, OptionParsing options) throws IOException {
 		IOUtils ioUtils = parsingFile();
 		try(Stream<Path> paths = Files.list(dir)) {
 			paths.filter(p -> Parser.isClassFile(p) || p.toString().endsWith(".jar")).forEach(path -> ioUtils.execute(path, pOperation, options));
@@ -98,7 +100,7 @@ public class Parser {
 	 * @param options
 	 * @throws IOException
 	 */
-	private static void chooseParser(Path path, PathOperation pOperation, ParsingOptions...options) throws IOException {
+	private static void chooseParser(Path path, PathOperation pOperation, OptionParsing options) throws IOException {
 		if (!Files.isDirectory(path)) {
 			if (!isClassFile(path)) {
 				parsingJar().execute(path, pOperation, options);
@@ -112,7 +114,7 @@ public class Parser {
 	 * @param pOperation
 	 * @param options
 	 */
-	private static void requires(Path path, PathOperation pOperation, ParsingOptions...options) {
+	private static void requires(Path path, PathOperation pOperation, OptionParsing options) {
 		Objects.requireNonNull(path);
 		Objects.requireNonNull(pOperation);
 		Objects.requireNonNull(List.of(options));
@@ -128,7 +130,7 @@ public class Parser {
 	 * @param options
 	 * @throws IOException
 	 */
-	public static void parse(Path path, PathOperation pOperation, ParsingOptions...options) throws IOException {
+	public static void parse(Path path, PathOperation pOperation, OptionParsing options) throws IOException {
 		requires(path, pOperation, options);
 		chooseParser(path, pOperation, options);
 		pOperation.execute(path, options);

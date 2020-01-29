@@ -1,15 +1,11 @@
 package fr.umlv.retro.options;
 
-import java.io.IOError;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.observer.ObserverVisitor;
-import fr.umlv.retro.parser.PathOperation;
-import fr.umlv.retro.parser.Parser;
 
 public class OptInfo implements Option {
 
@@ -20,7 +16,7 @@ public class OptInfo implements Option {
 	 */
 	@Override
 	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
-		System.out.println("Voici les infos");
+		/*System.out.println("Voici les infos");
 		try {
 			Parser.parse(path, PathOperation.create());
 		} catch (IOException e) {
@@ -31,7 +27,7 @@ public class OptInfo implements Option {
     		for (Class<? extends Feature> feature : features) {
 				ov.displayFeatureHistory(feature);
 			}
-    	}
+    	}*/
 	}
 	
 	/**
@@ -43,7 +39,9 @@ public class OptInfo implements Option {
 		Objects.requireNonNull(args);
 		return new OptInfo();
 	}
-	
 
-
+	@Override
+	public boolean isInfos() {
+		return true;
+	}
 }
