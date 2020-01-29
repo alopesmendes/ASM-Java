@@ -51,12 +51,12 @@ public class OptTarget implements Option {
 
 	@Override
 	public boolean isTarget() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public int getVersion() {
-		return version;
+		return Opcodes.V1_5 + (version-5);
 	}
 
 	public boolean isForce() {

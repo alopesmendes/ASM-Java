@@ -36,13 +36,14 @@ public class FeatureVisitor extends ClassVisitor {
 		if (true) {
 			classVisitor = Feature.createWriterFeauture(Opcodes.ASM7, classVisitor);
 		}
+		System.out.println(options.version());
 		return new FeatureVisitor(new ObserverVisitor(classVisitor), options.version());
 	}
 	
 	
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		cv.visit(Opcodes.V10, access, name, signature, superName, interfaces);
+		cv.visit(this.version.orElse(version), access, name, signature, superName, interfaces);
 	}
 	
 	@Override

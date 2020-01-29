@@ -14,10 +14,10 @@ public interface Feature {
 	}
 	
 	static ClassVisitor createWriterFeauture(int api, ClassVisitor classVisitor) {
-		ClassVisitor visitor = new Nestmates(api, classVisitor);
-		visitor = new Concat(api, visitor);
-		visitor = new Record(api, visitor);
-		return visitor;
+		
+		return new Concat(api, classVisitor);
 	}
+	
+	
 	
 }

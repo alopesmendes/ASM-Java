@@ -10,7 +10,6 @@ import fr.umlv.retro.options.OptionParsing;
 import fr.umlv.retro.parser.Parser;
 import fr.umlv.retro.parser.PathOperation;
 
-
 public class App {
 	
 	private static boolean isNotNumber(String str) {
