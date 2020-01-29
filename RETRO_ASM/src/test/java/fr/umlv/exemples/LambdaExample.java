@@ -1,4 +1,4 @@
-package fr.umlv.personal;
+package fr.umlv.exemples;
 
 import java.util.ArrayList;
 import java.util.function.BiFunction;

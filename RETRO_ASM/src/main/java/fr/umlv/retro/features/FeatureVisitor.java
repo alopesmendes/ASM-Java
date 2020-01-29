@@ -51,7 +51,14 @@ public class FeatureVisitor extends ClassVisitor {
 	
 	@Override
 	public String toString() {
-		return observerVisitor.toString();
+		return getObserverVisitor().toString();
+	}
+
+	/**
+	 * @return the observerVisitor.
+	 */
+	public ObserverVisitor getObserverVisitor() {
+		return observerVisitor;
 	}
 	
 }

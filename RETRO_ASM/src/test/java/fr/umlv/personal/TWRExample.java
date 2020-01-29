@@ -1,4 +1,4 @@
-package fr.umlv.pesonal;
+package fr.umlv.personal;
 
 public class TWRExample {
 	public static void main(String[ ] args) {

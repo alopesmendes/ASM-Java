@@ -1,4 +1,4 @@
-package fr.umlv.personal;
+package fr.umlv.exemples;
 
 import java.io.IOException;
 import java.nio.file.Files;

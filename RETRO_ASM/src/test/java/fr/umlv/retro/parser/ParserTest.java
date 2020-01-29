@@ -1,17 +1,7 @@
 package fr.umlv.retro.parser;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-
 public class ParserTest {
-	
+/*	
 	@Test @Tag("parameter")
 	public void testParserWithNullPath() {
 		assertThrows(NullPointerException.class, () -> Parser.parse(null, PathOperation.create()));
@@ -32,5 +22,5 @@ public class ParserTest {
 			() -> assertThrows(IOException.class, () -> Parser.parse(Paths.get("../Inexistant.jar"), PathOperation.create()))
 		);
 	}	
-	
+*/
 }

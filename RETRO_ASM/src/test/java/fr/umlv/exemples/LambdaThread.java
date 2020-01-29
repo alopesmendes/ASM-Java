@@ -1,4 +1,4 @@
-package fr.umlv.personal;
+package fr.umlv.exemples;
 
 public class LambdaThread {
 	public static void main(String[] args) {

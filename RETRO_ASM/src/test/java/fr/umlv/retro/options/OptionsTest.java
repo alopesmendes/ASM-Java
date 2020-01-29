@@ -1,11 +1,10 @@
 package fr.umlv.retro.options;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-
 
 class OptionsTest {
 
@@ -76,5 +75,7 @@ class OptionsTest {
 		int res = ParseOptions.parse(test, optfac, map).size();
 		assertEquals(4,  res);
 	}
+
+
 }
 
