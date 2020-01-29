@@ -13,8 +13,9 @@ module retro {
 	exports fr.umlv.retro.main;
 
 	requires transitive org.objectweb.asm;
-	
-	uses org.objectweb.asm.ClassVisitor;
+    requires java.ws.rs;
+
+    uses org.objectweb.asm.ClassVisitor;
 	uses org.objectweb.asm.ClassReader;
 	uses org.objectweb.asm.ClassWriter;
 	uses org.objectweb.asm.MethodVisitor;

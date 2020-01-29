@@ -17,7 +17,7 @@ public class OptTarget implements Option {
 	private final boolean force;
 	
 	/**
-	 * @param version
+	 * @param args
 	 */
 	private OptTarget(List<String> args) {
 		Objects.requireNonNull(args);
@@ -50,6 +50,19 @@ public class OptTarget implements Option {
 		}}
 	}
 
+	@Override
+	public boolean isTarget() {
+		return false;
+	}
+
+	@Override
+	public int getVersion() {
+		return version;
+	}
+
+	public boolean isForce() {
+		return force;
+	}
 
 	/**
 	 * Method of creation of an OptTarget

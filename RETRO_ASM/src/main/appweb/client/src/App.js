@@ -3,7 +3,6 @@ import './App.css';
 import './style.css';
 import Header from './Components/Header.js';
 import Footer from './Components/Footer.js';
-/*import HowUseIt from './Components/HowUseIt.js';*/
 import Form from './Components/Form.js';
 
 function App() {
@@ -12,9 +11,8 @@ function App() {
     <div className="App">
         <Header />
         <div className="FormContainer">
-            <Form />
+         <Form />
          </div>
-        <Footer />
     </div>
   );
 }

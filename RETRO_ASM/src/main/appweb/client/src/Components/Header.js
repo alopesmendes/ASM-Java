@@ -7,9 +7,9 @@ class Header extends Component{
             <header>
                                 <nav>
                                      <ul>
-                                        <li><a href="#">HOME</a></li>
+                                        <li><a href="/index.html">HOME</a></li>
                                         <li><a href="#">JAVA DOC</a></li>
-                                        <li><a href="#">HELP</a></li>
+                                        <li><a href="/Help.html">HELP</a></li>
                                     </ul>
                                 </nav>
                      </header>

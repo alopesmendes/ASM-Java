@@ -102,7 +102,7 @@ public class OptFeatures implements Option {
 
 	/**
 	 * 
-	 * @param key
+	 *
 	 * @return the value of the map
 	 */
 	public List< Class<? extends Feature>> getListFeatures() {

@@ -26,7 +26,12 @@ public class OptHelp implements Option {
 				+ "à lister en séparant avec des virgules. Features possibles(respectez orthographe): TryWithRessources, Record, Concatenation, Lambda et Nesmates\n"
 				+ "prend un .class, .jar ou un répertoire en paramètre");
 	}
-	
+
+	@Override
+	public boolean isTarget() {
+		return true;
+	}
+
 	/**
 	 * Method of creation of an OptHelp
 	 * @param args

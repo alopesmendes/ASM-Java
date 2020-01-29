@@ -6,37 +6,70 @@ class Features extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-				info: false,
-				selectAll: false,
-				lambda: false,
-				tryWithResources: false,
-				concatenation: false,
-				record: false,
-				nestMates: false,
+				isInfo: false,
+				selectAll: true,
+				lambda: true,
+				tryWithResources: true,
+				concatenation: true,
+				record: true,
+				nestMates: true,
 		};
 		this.handleInputChange = this.handleInputChange.bind(this);
 		this.handleClick = this.handleClick.bind(this);
+
+		this.handleInfoChange = this.handleInfoChange.bind(this);
+		this.refreshFeatures = this.refreshFeatures.bind(this);
 	}
+
+	handleInfoChange(event) {
+    		const target = event.target;
+    		const value = target.type === "checkbox" ? target.checked : target.value;
+    		const name = target.name;
+
+    		this.setState({
+    			[name]:value,
+    		});
+
+    		this.props.onInfoChange(event.target.checked);
+    	}
+
+    refreshFeatures(name){
+        const features = this.state;
+
+        this.props.onAnyFeatureChange(
+            features.lambda,
+        	features.tryWithResources,
+        	features.concatenation,
+        	features.record,
+        	features.nestMates);
+    }
 
 	handleInputChange(event) {
-		const target = event.target;
-		const value = target.type === "checkbox" ? target.checked : target.value;
-		const name = target.name;
+    		const target = event.target;
+    		const value = target.type === "checkbox" ? target.checked : target.value;
+    		const name = target.name;
 
-		this.setState({
-			[name]:value,
-		});
-	}
+
+    		this.setState((state, props)=>({
+    			[name]:value,
+    		}));
+
+    		this.refreshFeatures(name);
+
+
+
+    	}
 
 	handleClick(event) {
-		const selectAll = this.state.selectAll;
+    		const selectAll = this.state.selectAll;
 
-		this.setState({
-			selectAll: !selectAll,
-		});
+    		this.setState({
+    			selectAll: !selectAll,
+    		});
 
-		this.checkAll();
-	}
+    		this.checkAll();
+    		this.props.onAllFeaturesChange(selectAll);
+    	}
 
 	checkAll() {
 		const selectAll = this.state.selectAll;
@@ -66,7 +99,7 @@ class Features extends Component {
 
 		/*if (info) {*/
 			features =
-				<form>
+            <div>
 			<label>
 			Features:
 				</label>
@@ -132,7 +165,12 @@ class Features extends Component {
 			<label>
 			Nest Mates
 			</label>
-			</form>;
+			<br/>
+			<button type="button"
+            	    onClick={this.handleInputChange} >
+            	    Valid Features
+            </button>
+			</div>;
 		/*}*/
 
 		/*if (this.state.any) {
@@ -140,22 +178,20 @@ class Features extends Component {
 		}*/
 
 		return(
-				<form>
+                <div>
                 <div className="Infos">
-				<label>
-				Option Infos:
-				</label>
+				<label>Option Infos:</label>
 
-				<input
-				name="info"
-					type="checkbox"
-						checked={this.state.info}
-				onChange={this.handleInputChange} />
+				<input name="isInfo" type="checkbox" id="info"
+                value="info"
+                checked={this.state.isInfo}
+                onChange={this.handleInfoChange} />
 				</div>
 				<div className="Features">
 				{features}
 				</div>
-                </form>
+				</div>
+
 
 
 		);

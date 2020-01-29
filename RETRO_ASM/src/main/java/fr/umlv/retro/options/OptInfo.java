@@ -43,7 +43,9 @@ public class OptInfo implements Option {
 		Objects.requireNonNull(args);
 		return new OptInfo();
 	}
-	
 
-
+	@Override
+	public boolean isInfos() {
+		return true;
+	}
 }
