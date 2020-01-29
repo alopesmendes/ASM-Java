@@ -28,8 +28,6 @@ public class Nestmates extends ClassVisitor implements Feature {
 	@Override
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 			String[] exceptions) {
-		System.out.println("je visite method : " + name);
-
 		if ((access & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE) {
 			handles.add(new Handle(Opcodes.H_GETFIELD, classOwner, name, descriptor, false));
 		}
