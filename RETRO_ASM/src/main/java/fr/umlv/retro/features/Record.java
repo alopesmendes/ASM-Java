@@ -11,6 +11,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import fr.umlv.retro.features.Concat.ConcatImpl;
+
 public class Record extends ClassVisitor implements Feature {
 	private String className;
 	public Record(int api, ClassVisitor classVisitor) {
@@ -157,9 +159,9 @@ public class Record extends ClassVisitor implements Feature {
 			}
 			
 			public void firstInsn(Handle handle) {
-				Concat.ldc(className()+"["+handle.getName()+"=", mv);
+				ConcatImpl.ldc(className()+"["+handle.getName()+"=", mv);
 				getField(0, handle, mv);
-				Concat.append(Type.getType(handle.getDesc()), mv);
+				ConcatImpl.append(Type.getType(handle.getDesc()), mv);
 			}
 			
 			private void build(Object...bootstrapMethodArguments) {
@@ -167,20 +169,20 @@ public class Record extends ClassVisitor implements Feature {
 				mapToObj(i -> (Handle)bootstrapMethodArguments[i]).collect(Collectors.toList());
 				firstInsn(handles.get(0));
 				handles.stream().skip(1).forEach(h -> {
-					Concat.ldc(", "+h.getName()+"=", mv);
+					ConcatImpl.ldc(", "+h.getName()+"=", mv);
 					getField(0, h, mv);
-					Concat.append(Type.getType(h.getDesc()), mv);
+					ConcatImpl.append(Type.getType(h.getDesc()), mv);
 				});
-				Concat.ldc("]", mv);
+				ConcatImpl.ldc("]", mv);
 				
 			}
 			
 			@Override
 			public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
 					Object... bootstrapMethodArguments) {
-				Concat.begin(mv);
+				ConcatImpl.begin(mv);
 				build(bootstrapMethodArguments);
-				Concat.end(mv);
+				ConcatImpl.end(mv);
 				//mv.visitInvokeDynamicInsn(name, descriptor, bootstrapMethodHandle, bootstrapMethodArguments);
 			}
 			

@@ -28,7 +28,7 @@ public class FeatureVisitor extends ClassVisitor {
 	 * @return the featureVisitor.
 	 */
 	public static FeatureVisitor create(ClassWriter cw, ParsingOptions...options) {
-		return new FeatureVisitor(new ObserverVisitor(cw));
+		return new FeatureVisitor(new ObserverVisitor(new Nestmates(Opcodes.ASM7, cw)));
 	}
 	
 	

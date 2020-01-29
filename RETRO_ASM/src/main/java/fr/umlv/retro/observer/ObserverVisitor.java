@@ -25,11 +25,9 @@ public class ObserverVisitor extends ClassVisitor {
 	private String className;
 	private String host;
 	private final HashMap<String, ArrayList<String>> members = new HashMap<>();
-	private final Record record;
 	
 	public ObserverVisitor(ClassVisitor cv) {
 		super(Opcodes.ASM7, cv);
-		record = new Record(api, cv);
 	}
 	
 	@Override
@@ -41,8 +39,7 @@ public class ObserverVisitor extends ClassVisitor {
 		if (Feature.detect("java/lang/Record", superName)) {
 			observerHistory.onMessageReceived(Record.class, messages.infoOf(Record.class, name, name));
 		}
-		//cv.visit(version, access, name, signature, superName, interfaces);
-		record.visit(version, access, name, signature, superName, interfaces);
+		cv.visit(version, access, name, signature, superName, interfaces);
 	}
 	
 	@Override
@@ -51,8 +48,7 @@ public class ObserverVisitor extends ClassVisitor {
 		ArrayList<String> m = members.getOrDefault(host, new ArrayList<>());
 		m.add(nestMember);
 		members.put(host, m);
-		//cv.visitNestMember(nestMember);
-		record.visitNestMember(nestMember);
+		cv.visitNestMember(nestMember);
 	}
 	
 	private MethodVisitor methodVisitor(MethodVisitor methodVisitor,  String methodDescriptor) {
@@ -61,18 +57,13 @@ public class ObserverVisitor extends ClassVisitor {
 			private String onMethod = "";
 			private boolean isTry;
 			private String msg = "";
-			private int var;
 			
 			@Override
 			public void visitCode() {
 				mv.visitCode();
 			}
 			
-			@Override
-			public void visitVarInsn(int opcode, int var) {
-				mv.visitVarInsn(opcode, var);
-				this.var = Math.max(this.var, var);
-			}
+		
 			
 			@Override
 			public void visitLineNumber(int line, Label start) {
@@ -104,9 +95,7 @@ public class ObserverVisitor extends ClassVisitor {
 			public void visitInvokeDynamicInsn(String name, String descriptor, Handle bootstrapMethodHandle,
 					Object... bootstrapMethodArguments) {
 				if (Feature.detect(name, "makeConcatWithConstants")) {
-					observerHistory.onMessageReceived(Concat.class, messages.infoOf(Concat.class, className, methodDescriptor, line+"", bootstrapMethodArguments[0].toString()));
-					Concat.create(var, mv, descriptor, bootstrapMethodArguments).execute();;
-					return;
+					observerHistory.onMessageReceived(Concat.class, messages.infoOf(Concat.class, className, methodDescriptor, line+"", bootstrapMethodArguments[0].toString()));					
 				} else if (Feature.detect(bootstrapMethodHandle.getOwner(), "java/lang/invoke/LambdaMetafactory")) {
 					observerHistory.onMessageReceived(Lambdas.class, messages.infoOf(Lambdas.class, className, methodDescriptor, line+"", descriptor, bootstrapMethodArguments[1].toString()));
 				}
@@ -125,8 +114,7 @@ public class ObserverVisitor extends ClassVisitor {
 	public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
 			String[] exceptions) {
 		var mv = 	methodVisitor(
-					//cv.visitMethod(access, name, descriptor, signature, exceptions),
-					record.visitMethod(access, name, descriptor, signature, exceptions),
+					cv.visitMethod(access, name, descriptor, signature, exceptions),
 					name+descriptor);	
 	
 		return mv;
@@ -146,8 +134,7 @@ public class ObserverVisitor extends ClassVisitor {
 	@Override
 	public void visitEnd() {
 		messageNestMembers();
-		//cv.visitEnd();
-		record.visitEnd();
+		cv.visitEnd();
 		host = "";
 	}
 	
