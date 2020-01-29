@@ -36,7 +36,6 @@ public class Nestmates extends ClassVisitor implements Feature {
 
 	@Override
 	public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-		System.out.println("je visite champs : " + name);
 		if ((access & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE) {
 			handles.add(new Handle(Opcodes.H_GETFIELD, Type.getType(descriptor).getInternalName(), name, descriptor, false));
 		}

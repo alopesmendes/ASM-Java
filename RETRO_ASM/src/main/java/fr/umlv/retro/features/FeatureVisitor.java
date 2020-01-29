@@ -42,7 +42,7 @@ public class FeatureVisitor extends ClassVisitor {
 	
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		cv.visit(this.version.orElse(version), access, name, signature, superName, interfaces);
+		cv.visit(Opcodes.V10, access, name, signature, superName, interfaces);
 	}
 	
 	@Override
