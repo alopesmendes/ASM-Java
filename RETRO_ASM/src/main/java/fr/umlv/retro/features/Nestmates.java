@@ -39,6 +39,7 @@ public class Nestmates extends ClassVisitor implements Feature {
 		if ((access & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE) {
 			handles.add(new Handle(Opcodes.H_GETFIELD, Type.getType(descriptor).getInternalName(), name, descriptor, false));
 			createGetter(name, descriptor);
+			if ((access & Opcodes.ACC_FINAL) == Opcodes.ACC_FINAL) { createSetter(name, descriptor); }
 		}
 		return cv.visitField(access, name, descriptor, signature, value);
 	}
@@ -52,6 +53,18 @@ public class Nestmates extends ClassVisitor implements Feature {
 		  mv.visitFieldInsn(Opcodes.GETFIELD, classOwner, name, descriptor);
 		  mv.visitInsn(Type.getType(descriptor).getOpcode(Opcodes.IRETURN));
 		  mv.visitMaxs(0, 0);
+	}
+	
+	void createSetter(String name, String descriptor) {
+		String methodName = "$set" + name.substring(0, 1).toUpperCase() 
+			      + name.substring(1);
+			  MethodVisitor mv = 
+			      cv.visitMethod(Opcodes.ACC_PUBLIC, methodName, "("+descriptor+")V", null, null);
+			  mv.visitVarInsn(Opcodes.ALOAD, 0);
+			  mv.visitVarInsn(Type.getType(descriptor).getOpcode(Opcodes.ILOAD), 1);
+			  mv.visitFieldInsn(Opcodes.PUTFIELD, classOwner, name, descriptor);
+			  mv.visitInsn(Opcodes.RETURN);
+			  mv.visitMaxs(0, 0);
 	}
 	
 	@Override
