@@ -20,7 +20,6 @@ public interface Feature {
 		return origin.equals(feature);
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * @param api
 	 * @param classVisitor
@@ -81,13 +80,7 @@ public interface Feature {
 			}
 			return classVisitor;
 		}
-=======
-	static ClassVisitor createWriterFeauture(int api, ClassVisitor classVisitor) {
-		
-		return new Concat(api, classVisitor);
->>>>>>> 1645978403836fa67a97cf04ce1affe0e8865397
 	}
-	
 	
 	
 }
