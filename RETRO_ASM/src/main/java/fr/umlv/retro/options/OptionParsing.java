@@ -61,12 +61,9 @@ public class OptionParsing {
 
 
 
-	
-	public static void main(String[] args) {
-		var options = create(args);
-		System.out.println(options.version().get());
-	}
+
 
 
 
 }
+

@@ -70,7 +70,7 @@ public interface PathOperation {
 		 */
 		private ClassWriter executeClass(String name, OptionParsing options) {
 			ClassReader classReader = map.get(name);
-			ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS);
+			ClassWriter classWriter = options.isForce() ? new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS) : new ClassWriter(ClassWriter.COMPUTE_MAXS);
 			FeatureVisitor featureVisitor = FeatureVisitor.create(classWriter, options);
 			classReader.accept(featureVisitor, ClassReader.EXPAND_FRAMES);
 			features.add(featureVisitor);

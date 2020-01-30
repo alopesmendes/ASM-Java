@@ -33,10 +33,9 @@ public class FeatureVisitor extends ClassVisitor {
 	 */
 	public static FeatureVisitor create(ClassWriter cw, OptionParsing options) {
 		ClassVisitor classVisitor = cw;
-		if (true) {
-			classVisitor = Feature.createWriterFeauture(Opcodes.ASM7, classVisitor);
+		if (options.isForce()) {
+			classVisitor = Feature.createWriterFeauture(Opcodes.ASM7, classVisitor, options);
 		}
-		System.out.println(options.version());
 		return new FeatureVisitor(new ObserverVisitor(classVisitor), options.version());
 	}
 	
