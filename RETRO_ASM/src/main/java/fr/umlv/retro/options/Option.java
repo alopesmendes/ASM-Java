@@ -31,6 +31,10 @@ public interface Option {
 	public default int getVersion(){
 		return -1;
 	}
+	
+	public default boolean isForce() {
+		return false;
+	}
 
 	public default boolean isHelp(){
 		return false;

@@ -58,6 +58,15 @@ public class OptionParsing {
 		}
 		return false;
 	}
+	
+	public boolean isForce() {
+		for (Option option: options) {
+			if (option.isTarget()) {
+				return option.isForce();
+			}
+		}
+		return false;
+	}
 
 
 
