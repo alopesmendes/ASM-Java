@@ -1,6 +1,12 @@
 package fr.umlv.retro.features;
 
-public class TryWithRessources implements Feature {
+import org.objectweb.asm.ClassVisitor;
+
+public class TryWithRessources extends ClassVisitor implements Feature {
+
+	public TryWithRessources(int api, ClassVisitor classVisitor) {
+		super(api, classVisitor);
+	}
 
 	
 }

@@ -33,8 +33,8 @@ public class FeatureVisitor extends ClassVisitor {
 	 */
 	public static FeatureVisitor create(ClassWriter cw, OptionParsing options) {
 		ClassVisitor classVisitor = cw;
-		if (true) {
-			classVisitor = Feature.createWriterFeauture(Opcodes.ASM7, classVisitor);
+		if (options.isForce()) {
+			classVisitor = Feature.createWriterFeauture(Opcodes.ASM7, classVisitor, options);
 		}
 		return new FeatureVisitor(new ObserverVisitor(classVisitor), options.version());
 	}
@@ -42,7 +42,7 @@ public class FeatureVisitor extends ClassVisitor {
 	
 	@Override
 	public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-		cv.visit(Opcodes.V10, access, name, signature, superName, interfaces);
+		cv.visit(this.version.orElse(version), access, name, signature, superName, interfaces);
 	}
 	
 	@Override

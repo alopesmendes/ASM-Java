@@ -46,6 +46,10 @@ public class OptionParsing {
 		}
 		return Optional.empty();
 	}
+	
+	public boolean isForce() {
+		return options.stream().anyMatch(o -> o.isTarget());
+	}
 
 	/*
 
@@ -61,15 +65,14 @@ public class OptionParsing {
 
 
 
-	
-	/*public static void main(String[] args/*, ObserverVisitor ov, Path path) {
+/*	
+	public static void main(String[] args) {
 		OptionMap map = OptionMap.initMap();
 		OptionFactory optfac = new OptionFactory();
 		List<Option> options = ParseOptions.parse(args, optfac, map);
 		List<Class<? extends Feature>> features = ParseOptions.parseFeatures(args);
 		//options.forEach(x-> x.execute(ov, features, path));
-	}*/
-
-
+	}
+*/
 
 }

@@ -1,6 +1,12 @@
 package fr.umlv.retro.features;
 
-public class Lambdas implements Feature {
+import org.objectweb.asm.ClassVisitor;
+
+public class Lambdas extends ClassVisitor implements Feature {
+
+	public Lambdas(int api, ClassVisitor classVisitor) {
+		super(api, classVisitor);
+	}
 
 
 

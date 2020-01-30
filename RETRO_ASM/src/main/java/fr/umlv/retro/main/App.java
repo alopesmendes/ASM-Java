@@ -5,11 +5,11 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import fr.umlv.retro.options.OptionParsing;
 import fr.umlv.retro.parser.Parser;
 import fr.umlv.retro.parser.PathOperation;
-
 
 public class App {
 	
@@ -30,6 +30,9 @@ public class App {
     	PathOperation operation  = PathOperation.create();
     	OptionParsing options = OptionParsing.create(args);
     	Parser.parse(path, operation, options);
+    	if (options.isInfos()) {
+    		System.out.println(operation.allFeatures().stream().map(f -> f.toString()).collect(Collectors.joining()));
+    	}
     	//MainOpt.main(args, ov ,p);
     }
 }
