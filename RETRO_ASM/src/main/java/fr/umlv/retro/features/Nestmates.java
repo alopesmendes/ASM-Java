@@ -38,8 +38,20 @@ public class Nestmates extends ClassVisitor implements Feature {
 	public FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
 		if ((access & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE) {
 			handles.add(new Handle(Opcodes.H_GETFIELD, Type.getType(descriptor).getInternalName(), name, descriptor, false));
+			createGetter(name, descriptor);
 		}
 		return cv.visitField(access, name, descriptor, signature, value);
+	}
+	
+	void createGetter(String name, String descriptor) {
+		  String methodName = "$get" + name.substring(0, 1).toUpperCase() 
+		      + name.substring(1);
+		  MethodVisitor mv = 
+		      cv.visitMethod(Opcodes.ACC_PUBLIC, methodName, "()" + descriptor, null, null);
+		  mv.visitVarInsn(Opcodes.ALOAD, 0);
+		  mv.visitFieldInsn(Opcodes.GETFIELD, classOwner, name, descriptor);
+		  mv.visitInsn(Type.getType(descriptor).getOpcode(Opcodes.IRETURN));
+		  mv.visitMaxs(0, 0);
 	}
 	
 	@Override

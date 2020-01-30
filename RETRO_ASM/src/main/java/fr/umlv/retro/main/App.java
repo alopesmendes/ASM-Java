@@ -33,6 +33,5 @@ public class App {
     	if (options.isInfos()) {
     		System.out.println(operation.allFeatures().stream().map(f -> f.toString()).collect(Collectors.joining()));
     	}
-    	//MainOpt.main(args, ov ,p);
     }
 }
