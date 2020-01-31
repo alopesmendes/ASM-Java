@@ -59,6 +59,7 @@ public class OptTarget implements Option {
 		return Opcodes.V1_5 + (version-5);
 	}
 
+	@Override
 	public boolean isForce() {
 		return force;
 	}

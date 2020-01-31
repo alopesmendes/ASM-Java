@@ -58,18 +58,21 @@ public class OptionParsing {
 		}
 		return false;
 	}
-
-
-
 	
-	/*public static void main(String[] args/*, ObserverVisitor ov, Path path) {
-		OptionMap map = OptionMap.initMap();
-		OptionFactory optfac = new OptionFactory();
-		List<Option> options = ParseOptions.parse(args, optfac, map);
-		List<Class<? extends Feature>> features = ParseOptions.parseFeatures(args);
-		//options.forEach(x-> x.execute(ov, features, path));
-	}*/
+	public boolean isForce() {
+		for (Option option: options) {
+			if (option.isTarget()) {
+				return option.isForce();
+			}
+		}
+		return false;
+	}
+
+
+
+
 
 
 
 }
+
