@@ -19,6 +19,11 @@ import fr.umlv.retro.features.Nestmates;
 import fr.umlv.retro.features.Record;
 import fr.umlv.retro.features.TryWithRessources;
 
+/**
+ * The ObserverVisitor class is a classVisitor that will stock the informations of the features.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class ObserverVisitor extends ClassVisitor {
 	private final ObserverHistory observerHistory = new ObserverHistory();
 	private final FeatureInfoMessage messages = FeatureInfoMessage.create();
@@ -26,6 +31,10 @@ public class ObserverVisitor extends ClassVisitor {
 	private String host;
 	private final HashMap<String, ArrayList<String>> members = new HashMap<>();
 	
+	/**
+	 * Constructs a ObserverVisitor with a ClassVisitor.
+	 * @param cv a classVisitor.
+	 */
 	public ObserverVisitor(ClassVisitor cv) {
 		super(Opcodes.ASM7, cv);
 	}
@@ -139,7 +148,7 @@ public class ObserverVisitor extends ClassVisitor {
 	}
 	
 	/**
-	 * @param typeFeature
+	 * @param typeFeature to determine which feature.
 	 * @return the messages according to a type of feature.
 	 */
 	public String displayFeatureHistory(Class<? extends Feature> typeFeature) {

@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+
+/**
+ * Map corresponding to the options command line String to the options objects factory methods
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class OptionMap {
 	private final HashMap<String, Function<List<String>, Option>> map;
 
@@ -16,7 +22,7 @@ public class OptionMap {
 	
 	/**
 	 * 
-	 * @param key
+	 * @param key a String.
 	 * @return a function of creation of an option corresponding to a key
 	 */
 	public Function<List<String>,Option> get(String key){
@@ -30,7 +36,7 @@ public class OptionMap {
 	
 	/**
 	 * 
-	 * @param key
+	 * @param key a String.
 	 * @return true if key is a key of the map
 	 */
 	public boolean contains(String key) {

@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 
 import fr.umlv.retro.features.Feature;
 
+
 /**
- * @author lopes
- *
+ * The ObserverHistory class will stock, but also be able to display every message.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
  */
 public class ObserverHistory implements Observer {
 	private final HashSet<Class<? extends Feature>> set = new HashSet<>();
@@ -32,7 +34,7 @@ public class ObserverHistory implements Observer {
 	}
 	
 	/**
-	 * @param typeFeature
+	 * @param typeFeature to determine which feature.
 	 * @return all the information of a type.
 	 */
 	public HashSet<String> infoOf(Class<? extends Feature> typeFeature) {

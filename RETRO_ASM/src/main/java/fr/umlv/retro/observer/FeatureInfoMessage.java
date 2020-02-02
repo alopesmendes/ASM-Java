@@ -14,6 +14,11 @@ import fr.umlv.retro.features.Nestmates;
 import fr.umlv.retro.features.Record;
 import fr.umlv.retro.features.TryWithRessources;
 
+/**
+ * The FeatureInfoMessage class will create a message of a certain feature.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class FeatureInfoMessage {
 	private final HashMap<Class<? extends Feature>, Function<String[], String>> map;
 	
@@ -101,8 +106,8 @@ public class FeatureInfoMessage {
 	}
 	
 	/**
-	 * @param type
-	 * @param args
+	 * @param type to determine which feature.
+	 * @param args the arguments to create the message
 	 * @return the message of a type of feature with it's args.
 	 */
 	public String infoOf(Class<? extends Feature> type, String... args) {

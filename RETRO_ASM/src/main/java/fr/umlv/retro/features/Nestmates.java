@@ -9,6 +9,11 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+/**
+ * The Nestmates class will rewrite the Nestmates.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class Nestmates extends ClassVisitor implements Feature {
 	private String classOwner;
 	private final ArrayList<String> nests = new ArrayList<>();

@@ -5,13 +5,20 @@ import java.util.List;
 
 import fr.umlv.retro.features.Feature;
 
+
+
+/**
+ * Parser of the options command line
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class ParseOptions {
 	
 	/**
 	 * Parse the command line and returns a list of Options
-	 * @param args
-	 * @param optfac
-	 * @param map
+	 * @param args array of Strings.
+	 * @param optfac a OptionFactory.
+	 * @param map a OptionMap.
 	 * @return a list of Option
 	 */
 	public static List<Option> parse(String[] args,OptionFactory optfac, OptionMap map){
@@ -24,7 +31,11 @@ public class ParseOptions {
 		return liste;
 	}
 	
-	
+	/**
+	 * Parser specific for Option Feature
+	 * @param args array of Strings
+	 * @return list of feature classes
+	 */
 	public static List<Class<? extends Feature>> parseFeatures(String[] args){
 		List<Class<? extends Feature>> liste = new ArrayList<Class<? extends Feature>>();
 		for (int i = 0; i < args.length; i++) {

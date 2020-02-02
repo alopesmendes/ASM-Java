@@ -13,9 +13,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
@@ -29,14 +28,7 @@
 			<version>5.5.2</version>
 			<scope>test</scope>
 		</dependency>
-		
-		    <dependency>
-		     	<groupId>org.apache.maven.plugins</groupId>
-		      	<artifactId>maven-javadoc-plugin</artifactId>
-		      	<version>3.1.1</version>
-		      	<type>maven-plugin</type>
-		    </dependency>
-		    
+
 	</dependencies>
 
 	<build>
@@ -60,8 +52,47 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>3.2.0</version>
 			</plugin>
-			
-			
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.7.1</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<!-- Default configuration for all reports -->
+					<show>public</show>
+				</configuration>
+				
+				<executions>
+					<execution>
+						<id>aggregate</id>
+						<goals>
+							<goal>aggregate</goal>
+						</goals>
+						<phase>site</phase>
+						
+						<configuration>
+							
+							<aggregate>true</aggregate>
+							
+						</configuration>
+						
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+
+
 </project>

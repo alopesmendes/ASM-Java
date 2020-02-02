@@ -1,13 +1,11 @@
 package fr.umlv.retro.options;
 
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 
 import fr.umlv.retro.features.Concat;
 import fr.umlv.retro.features.Feature;
@@ -15,14 +13,20 @@ import fr.umlv.retro.features.Lambdas;
 import fr.umlv.retro.features.Nestmates;
 import fr.umlv.retro.features.Record;
 import fr.umlv.retro.features.TryWithRessources;
-import fr.umlv.retro.observer.ObserverVisitor;
 
+
+/**
+ * Represents the option -Features
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class OptFeatures implements Option {
 	private final HashMap<String,Integer> map;
 	private final HashMap<String, Class<? extends Feature>> map2;
 	
 	/**
 	 * @param args
+	 * Constructor
 	 */
 	private OptFeatures(List<String> args) {
 		this.map = applyArgs(args);
@@ -69,19 +73,11 @@ public class OptFeatures implements Option {
 		return res;
 	}
 
-	/**
-	 * Method which execute the option -Features
-	 */
-	@Override
-	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
-		Objects.requireNonNull(features);
-		Objects.requireNonNull(ov);
-		map.forEach((k,v)->System.out.println("Feature " + k + " || Activated : " + v));
-	}
+	
 	
 	/**
 	 * Method of creation of an OptFeatures
-	 * @param args
+	 * @param args list of args.
 	 * @return an option instance of OptFeatures
 	 */
 	public static Option create(List<String> args) {
@@ -91,7 +87,7 @@ public class OptFeatures implements Option {
 	
 	/**
 	 * Method of creation of an OptFeatures
-	 * @param args
+	 * @param args list of args.
 	 * @return an OptFeatures
 	 */
 	public static OptFeatures createOptFeatures(List<String> args) {
@@ -103,7 +99,7 @@ public class OptFeatures implements Option {
 	/**
 	 * 
 	 *
-	 * @return the value of the map
+	 * @return the list of features activated
 	 */
 	public List< Class<? extends Feature>> getListFeatures() {
 		List<Class<? extends Feature>> res = new ArrayList<Class<? extends Feature>>();

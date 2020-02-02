@@ -15,15 +15,31 @@ import org.objectweb.asm.ClassReader;
 
 import fr.umlv.retro.options.OptionParsing;
 
+/**
+ * The Parser class will parse the given path.
+ * Path as to be a .class, directory of .class or a jar.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class Parser {
+	
+	private Parser() {
+		
+	}
+	
 	@FunctionalInterface
 	private static interface IOUtils {
-		void execute(Path path, PathOperation noName, OptionParsing options);
+		/**
+		 * @param path a Path
+		 * @param operation a PathOperation
+		 * @param options a OptionParsing.
+		 */
+		void execute(Path path, PathOperation operation, OptionParsing options);
 	}
 	
 	/**
 	 * With a given path determines if is .class.
-	 * @param path
+	 * @param path a Path.
 	 * @return true if is .class
 	 */
 	static boolean isClassFile(Path path) {
@@ -32,7 +48,7 @@ public class Parser {
 	
 	/**
 	 * With a given zipEntry if is .class.
-	 * @param zipEntry
+	 * @param zipEntry a ZipEntry.
 	 * @return true if is .class
 	 */
 	static boolean isClassFile(ZipEntry zipEntry) {
@@ -53,11 +69,11 @@ public class Parser {
 	
 	/**
 	 * Stocks every .class of a jar and it's classReader.
-	 * @param path
-	 * @param jStream
-	 * @param pOperation
-	 * @param options
-	 * @throws IOException
+	 * @param path a Path.
+	 * @param jStream a JarInputStream.
+	 * @param pOperation a PathOperation.
+	 * @param options a OptionParsing
+	 * @throws IOException if the method getNextEntry throws an IOException.
 	 */
 	private static void parsingEntry(Path path, JarInputStream jStream, PathOperation pOperation, OptionParsing options) throws IOException {
 		for (ZipEntry entry = jStream.getNextEntry(); entry != null; entry = jStream.getNextEntry()) {
@@ -81,10 +97,10 @@ public class Parser {
 	
 	/**
 	 * Parses every .class or .jar of a given directory.
-	 * @param dir
-	 * @param pOperation
-	 * @param options
-	 * @throws IOException
+	 * @param dir a Path.
+	 * @param pOperation a PathOperation.
+	 * @param options a OptionParsing.
+	 * @throws IOException if the method Files.list throws an IOException.
 	 */
 	private static void parsingDirectory(Path dir, PathOperation pOperation, OptionParsing options) throws IOException {
 		IOUtils ioUtils = parsingFile();
@@ -95,10 +111,10 @@ public class Parser {
 	
 	/**
 	 * Chooses which parsing method it should use.
-	 * @param path
-	 * @param pOperation
-	 * @param options
-	 * @throws IOException
+	 * @param path a path.
+	 * @param pOperation a PathOperation.
+	 * @param options a OptionParsing.
+	 * @throws IOException if the code throws an IOException.
 	 */
 	private static void chooseParser(Path path, PathOperation pOperation, OptionParsing options) throws IOException {
 		if (!Files.isDirectory(path)) {
@@ -110,9 +126,9 @@ public class Parser {
 	
 	/**
 	 * Verify's every requirement necessary to start parsing.
-	 * @param path
-	 * @param pOperation
-	 * @param options
+	 * @param path a Path.
+	 * @param pOperation a PathOperation.
+	 * @param options a OptionParsing.
 	 */
 	private static void requires(Path path, PathOperation pOperation, OptionParsing options) {
 		Objects.requireNonNull(path);
@@ -125,10 +141,10 @@ public class Parser {
 		
 	/**
 	 * Parses path and executes.
-	 * @param path
-	 * @param pOperation
-	 * @param options
-	 * @throws IOException
+	 * @param path a Path.
+	 * @param pOperation a PathOperation.
+	 * @param options a OptionParsing.
+	 * @throws IOException while parsing it may throws an IOException.
 	 */
 	public static void parse(Path path, PathOperation pOperation, OptionParsing options) throws IOException {
 		requires(path, pOperation, options);

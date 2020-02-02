@@ -9,22 +9,28 @@ import org.objectweb.asm.ClassVisitor;
 
 import fr.umlv.retro.options.OptionParsing;
 
+/**
+ * The feature interface will regroup all possible features to create an unique ClassVisitor.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public interface Feature {
 	
+	
 	/**
-	 * @param origin
-	 * @param feature
-	 * @return true if origin equals feature.
+	 * @param origin the feature.
+	 * @param feature the supposed given feature.
+	 * @return true if origin equals feature
 	 */
 	static boolean detect(String origin, String feature) {
 		return origin.equals(feature);
 	}
 	
 	/**
-	 * @param api
-	 * @param classVisitor
-	 * @param options
-	 * @return
+	 * @param api Opcodes.ASM
+	 * @param classVisitor starting classVisitor.
+	 * @param options how to create our ClassVisitor.
+	 * @return a new ClassVisitor that deals with the features.q
 	 */
 	static ClassVisitor createWriterFeauture(int api, ClassVisitor classVisitor, OptionParsing options) {
 		return FeatureImpl.createClassVisitor(api, classVisitor, options);
@@ -58,6 +64,12 @@ public interface Feature {
 			return new FeatureImpl(map);
 		}
 		
+		/**
+		 * @param api
+		 * @param classVisitor
+		 * @param featureImpl
+		 * @return
+		 */
 		private static ClassVisitor defaultVisitor(int api, ClassVisitor classVisitor, FeatureImpl featureImpl) {
 			for (var value : featureImpl.featureVisitors.values()) {
 				classVisitor = value.apply(classVisitor); 
