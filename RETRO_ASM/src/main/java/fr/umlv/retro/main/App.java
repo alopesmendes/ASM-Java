@@ -30,6 +30,7 @@ public class App {
     	PathOperation operation  = PathOperation.create();
     	OptionParsing options = OptionParsing.create(args);
     	Parser.parse(path, operation, options);
+    	options.help();
     	if (options.isInfos()) {
     		System.out.println(operation.allFeatures().stream().map(f -> f.toString()).collect(Collectors.joining()));
     	}

@@ -17,12 +17,19 @@ import fr.umlv.retro.features.Record;
 import fr.umlv.retro.features.TryWithRessources;
 import fr.umlv.retro.observer.ObserverVisitor;
 
+
+/**
+ * Represents the option -Features
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class OptFeatures implements Option {
 	private final HashMap<String,Integer> map;
 	private final HashMap<String, Class<? extends Feature>> map2;
 	
 	/**
 	 * @param args
+	 * Constructor
 	 */
 	private OptFeatures(List<String> args) {
 		this.map = applyArgs(args);
@@ -69,15 +76,7 @@ public class OptFeatures implements Option {
 		return res;
 	}
 
-	/**
-	 * Method which execute the option -Features
-	 */
-	@Override
-	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
-		Objects.requireNonNull(features);
-		Objects.requireNonNull(ov);
-		map.forEach((k,v)->System.out.println("Feature " + k + " || Activated : " + v));
-	}
+	
 	
 	/**
 	 * Method of creation of an OptFeatures
@@ -103,7 +102,7 @@ public class OptFeatures implements Option {
 	/**
 	 * 
 	 *
-	 * @return the value of the map
+	 * @return the list of features activated
 	 */
 	public List< Class<? extends Feature>> getListFeatures() {
 		List<Class<? extends Feature>> res = new ArrayList<Class<? extends Feature>>();

@@ -15,7 +15,7 @@ public class OptHelp implements Option {
 	/**
 	 * Method which execute the option -Help
 	 */
-	@Override
+	/*@Override
 	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
 		System.out.println("Option -Help:\n Fonctionnement du programme:\n Programme de rétrocompilation Java\n \n"
 				+ "Option -Target: option qui nécessite un entier entre 5 et 13 de version pour recompiler le fichier en paramètres "
@@ -25,10 +25,13 @@ public class OptHelp implements Option {
 				+ "Option -Features qui prend en paramètres les features que vous souhaitez réecrire avec Target ou afficher avec -Infos "
 				+ "à lister en séparant avec des virgules. Features possibles(respectez orthographe): TryWithRessources, Record, Concatenation, Lambda et Nesmates\n"
 				+ "prend un .class, .jar ou un répertoire en paramètre");
-	}
+	}*/
 
+	/**
+	 * @return the activation of option -Target
+	 */
 	@Override
-	public boolean isTarget() {
+	public boolean isHelp() {
 		return true;
 	}
 

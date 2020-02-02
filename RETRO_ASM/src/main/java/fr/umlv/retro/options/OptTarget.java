@@ -10,12 +10,19 @@ import org.objectweb.asm.Opcodes;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.observer.ObserverVisitor;
 
+
+/**
+ * Represents the option -Target
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class OptTarget implements Option {
 	private final int version;
 	private final boolean force;
 	
 	/**
 	 * @param args
+	 * @return an OptTarget
 	 */
 	private OptTarget(List<String> args) {
 		Objects.requireNonNull(args);
@@ -30,33 +37,26 @@ public class OptTarget implements Option {
 	}
 	
 
-	/**
-	 * Method which execute the option -Target
-	 */
-	@Override
-	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features, Path path) {
-		/*Objects.requireNonNull(ov);
-		Objects.requireNonNull(features);
-		System.out.println("Option Target avec Version: "+ version +" et Force: "+ force+"\nRéecriture pas encore correctement implémenté car ajout réécriture des features en cours");
-		if (!path.toString().endsWith(".class") || !(features.contains(Concat.class) && features.size()==1)) {
-			System.out.println("Actuellement, ne fonctionne qu'avec des .class avec la feature concatenation");
-		}else{try {
-			Parser.parse(path, PathOperation.create());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}}*/
-	}
 
+	/**
+	 * @return if Target is activated
+	 */
 	@Override
 	public boolean isTarget() {
 		return true;
 	}
 
+	/**
+	 * @return the version to recompile
+	 */
 	@Override
 	public int getVersion() {
 		return Opcodes.V1_5 + (version-5);
 	}
 
+	/**
+	 * @return if force is activated
+	 */
 	@Override
 	public boolean isForce() {
 		return force;

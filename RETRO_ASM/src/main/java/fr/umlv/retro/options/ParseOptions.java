@@ -5,6 +5,13 @@ import java.util.List;
 
 import fr.umlv.retro.features.Feature;
 
+
+
+/**
+ * Parser of the options command line
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class ParseOptions {
 	
 	/**
@@ -24,7 +31,11 @@ public class ParseOptions {
 		return liste;
 	}
 	
-	
+	/**
+	 * Parser specific for Option Feature
+	 * @param args 
+	 * @return list of feature classes
+	 */
 	public static List<Class<? extends Feature>> parseFeatures(String[] args){
 		List<Class<? extends Feature>> liste = new ArrayList<Class<? extends Feature>>();
 		for (int i = 0; i < args.length; i++) {

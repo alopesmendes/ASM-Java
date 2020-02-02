@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+
+/**
+ * Map corresponding to the options command line String to the options objects factory methods
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class OptionMap {
 	private final HashMap<String, Function<List<String>, Option>> map;
 

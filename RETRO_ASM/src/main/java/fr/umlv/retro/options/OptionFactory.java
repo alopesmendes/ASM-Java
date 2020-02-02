@@ -3,6 +3,11 @@ package fr.umlv.retro.options;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Factory of the options
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class OptionFactory {
 	
 	

@@ -7,27 +7,15 @@ import java.util.Objects;
 import fr.umlv.retro.features.Feature;
 import fr.umlv.retro.observer.ObserverVisitor;
 
+
+/**
+ * Represents the option -Infos
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class OptInfo implements Option {
 
 	private OptInfo() {
-	}
-	/**
-	 * Method which execute the option -Infos
-	 */
-	@Override
-	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features,  Path path) {
-		/*System.out.println("Voici les infos");
-		try {
-			Parser.parse(path, PathOperation.create());
-		} catch (IOException e) {
-			throw new IOError(e);
-		}if (features.size()==0) {
-    		System.out.println(ov.toString());
-    	}else {
-    		for (Class<? extends Feature> feature : features) {
-				ov.displayFeatureHistory(feature);
-			}
-    	}*/
 	}
 	
 	/**
@@ -40,6 +28,10 @@ public class OptInfo implements Option {
 		return new OptInfo();
 	}
 
+	/**
+	 * 
+	 * @return if the option -Infos is activated 
+	 */
 	@Override
 	public boolean isInfos() {
 		return true;
