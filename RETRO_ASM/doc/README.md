@@ -15,6 +15,12 @@ Only rewrites Concatenation, Nestmates and Record.
 ## Javadoc & Jar
 To generate the javadoc use the command mvn clean install site then look in target/site/apidocs and launch index.html
 
+## WebService
+We created a frontend React which is a form to define the options you want to execute Retrocompilation.
+To use it you can go at ASM-Java\RETRO_ASM\src\main\appweb\client and launch npm install and npm start
+You can find a screen of the website in doc/.
+We had some difficulties to link it with Quarkus cause of CORS connection which didn't allow to apply it
+
 ## Conclusion
 
-By a lacked of time we could not finish to rewrite every Feature.
+By a lack of time we could not finish to rewrite every Feature and to have a functional webservice.

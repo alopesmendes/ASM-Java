@@ -6,7 +6,8 @@ class Footer extends Component{
         return(
             <div className="Footer">
                 <footer>
-                    <p>Rendu Examen Web</p>
+                    <p>LOPES MENDES Ailton & LAMBERT--DELAVAQUERIE Fabien</p>
+
                 </footer>
             </div>
         );

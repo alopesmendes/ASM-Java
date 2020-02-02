@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RetroCompiler</title>
+    <link type="text/css" rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="App">
+<div class="Header">
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/index.html">HOME</a></li>
+                <li><a href="#">JAVA DOC</a></li>
+                <li><a href="/Help.html">HELP</a></li>
+            </ul>
+        </nav>
+    </header>
+</div>
+    <div class="FormContainer">
+        <div class="HELP">
+            <h2>Retrocompiler Using:</h2>
+            <div class="Target">
+                <p>The objective of the program is to retrocompile bytecodes in java</p>
+            </div>
+            <div class="Target">
+                <p><strong>Option -Target:</strong><br/>
+                    Rewrite the bytecode into the version of Java you select.<br/>
+                    You must select a java version between 5 and 13 which you want to recompile your file.<br/>
+                    <strong>--force:</strong> is a sub-option to "force" to rewrite features which are not allowed by
+                    the version you chose
+                </p>
+
+            </div>
+            <div class="Infos">
+                <p><strong>Option -Infos:</strong><br/>
+                    List the features contained in the byte code of the files in entry.<br/>
+                    You can chose specific features to list with the option -Features</p>
+            </div>
+            <div class="Infos">
+                <p><strong>Option -Features:</strong><br/>
+                    - Concatenation: JAVA <br/>
+                    - Try With Ressources: JAVA <br/>
+                    - Lambda : JAVA<br/>
+                    - NestMates: JAVA<br/>
+                    - Record :JAVA<br/>
+                </p>
+            </div>
+            <div class="Infos">
+                <p><strong>Input Path:</strong><br/>
+                    This is the path that the program will parse to rewrite(target) or to detect features(infos)<br/>
+                    You can enter the path of a directory, a jar or a file .class
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+</body>
+</html>
