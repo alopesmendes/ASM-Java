@@ -33,7 +33,7 @@ public class ParseOptions {
 	
 	/**
 	 * Parser specific for Option Feature
-	 * @param args 
+	 * @param args array of Strings
 	 * @return list of feature classes
 	 */
 	public static List<Class<? extends Feature>> parseFeatures(String[] args){

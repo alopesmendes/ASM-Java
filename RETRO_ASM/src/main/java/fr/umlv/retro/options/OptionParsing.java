@@ -22,7 +22,7 @@ public class OptionParsing {
 
 	/**
 	 * Creation of the OptionParsing from the commandline
-	 * @param args
+	 * @param args array of strings
 	 * @return OptionParsing
 	 */
 	public static OptionParsing create(String[] args){
@@ -85,7 +85,7 @@ public class OptionParsing {
 		return false;
 	}
 	
-	public void Help() {
+	public void help() {
 		for (Option option: options) {
 			if (option.isHelp()) {
 				System.out.println("Option -Help:\n Fonctionnement du programme:\n Programme de rétrocompilation Java\n \n"

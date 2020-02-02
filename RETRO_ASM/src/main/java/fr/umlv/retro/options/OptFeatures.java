@@ -1,13 +1,11 @@
 package fr.umlv.retro.options;
 
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 
 import fr.umlv.retro.features.Concat;
 import fr.umlv.retro.features.Feature;
@@ -15,7 +13,6 @@ import fr.umlv.retro.features.Lambdas;
 import fr.umlv.retro.features.Nestmates;
 import fr.umlv.retro.features.Record;
 import fr.umlv.retro.features.TryWithRessources;
-import fr.umlv.retro.observer.ObserverVisitor;
 
 
 /**

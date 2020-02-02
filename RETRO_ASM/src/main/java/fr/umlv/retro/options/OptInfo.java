@@ -1,11 +1,7 @@
 package fr.umlv.retro.options;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
-
-import fr.umlv.retro.features.Feature;
-import fr.umlv.retro.observer.ObserverVisitor;
 
 
 /**
