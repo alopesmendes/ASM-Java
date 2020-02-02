@@ -1,7 +1,6 @@
 package fr.umlv.retro.options;
 
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +32,6 @@ public class OptTarget implements Option {
 
 	/**
 	 * Method which execute the option -Target
-	 * @throws IOException 
 	 */
 	@Override
 	public void execute(ObserverVisitor ov, List<Class<? extends Feature>> features, Path path) {
@@ -66,7 +64,7 @@ public class OptTarget implements Option {
 
 	/**
 	 * Method of creation of an OptTarget
-	 * @param args
+	 * @param args list of Strings.
 	 * @return an option instance of OptTarget
 	 */
 	public static Option create(List<String> args) {

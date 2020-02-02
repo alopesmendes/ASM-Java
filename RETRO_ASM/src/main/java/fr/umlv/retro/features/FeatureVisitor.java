@@ -10,6 +10,11 @@ import org.objectweb.asm.Opcodes;
 import fr.umlv.retro.observer.ObserverVisitor;
 import fr.umlv.retro.options.OptionParsing;
 
+/**
+ *  The FeatureVisitor class is a classVisitor that will process a classVisitor.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class FeatureVisitor extends ClassVisitor {
 	private final ObserverVisitor observerVisitor;
 	private final Optional<Integer> version;
@@ -25,11 +30,11 @@ public class FeatureVisitor extends ClassVisitor {
 		this.version = version;
 	}
 	
+	
 	/**
-	 * Creates a featureVisitor.
-	 * @param observerVisitor
-	 * @param options
-	 * @return the featureVisitor.
+	 * @param cw a classWriter
+	 * @param options a OptionParsing that will allow us to know how to create FeatureVisitor.
+	 * @return a new FeatureVisitor.
 	 */
 	public static FeatureVisitor create(ClassWriter cw, OptionParsing options) {
 		ClassVisitor classVisitor = cw;

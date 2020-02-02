@@ -13,6 +13,11 @@ import org.objectweb.asm.Type;
 
 import fr.umlv.retro.features.Concat.ConcatImpl;
 
+/**
+ * The Record class will rewrite the Records.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class Record extends ClassVisitor implements Feature {
 	private String className;
 	public Record(int api, ClassVisitor classVisitor) {

@@ -32,7 +32,7 @@ public class OptInfo implements Option {
 	
 	/**
 	 * Method of creation of an OptInfo
-	 * @param args
+	 * @param args list of args.
 	 * @return an option instance of OptInfo
 	 */
 	public static Option create(List<String> args) {

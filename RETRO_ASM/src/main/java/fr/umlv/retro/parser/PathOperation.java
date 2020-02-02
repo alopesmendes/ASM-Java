@@ -25,11 +25,16 @@ import org.objectweb.asm.ClassWriter;
 import fr.umlv.retro.features.FeatureVisitor;
 import fr.umlv.retro.options.OptionParsing;
 
+/**
+ * The PathOperation interface will stock, but also be able to execute the operations.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public interface PathOperation {
 	/**
 	 * Stocks according to a name of a .class it's classReader.
-	 * @param name
-	 * @param classReader
+	 * @param name a String.
+	 * @param classReader a ClassReader
 	 */
 	void stock(String name, ClassReader classReader); 
 	
@@ -37,9 +42,9 @@ public interface PathOperation {
 	 * Managed by the given options.
 	 * Executes all the operations in the given path.
 	 * The path can only be a directory, a file .class and a jar.
-	 * @param path
-	 * @param options
-	 * @throws IOException
+	 * @param path a Path.
+	 * @param options a OptionParsing.
+	 * @throws IOException while executing may throws.
 	 */
 	void execute(Path path, OptionParsing options) throws IOException;
 	
@@ -49,10 +54,10 @@ public interface PathOperation {
 	List<FeatureVisitor> allFeatures();
 	
 	static PathOperation create() {
-		return new NoNameImpl();
+		return new PathOperationImpl();
 	}
 
-	static class NoNameImpl implements PathOperation {
+	static class PathOperationImpl implements PathOperation {
 		private final HashMap<String, ClassReader> map = new HashMap<>();
 		private final ArrayList<FeatureVisitor> features = new ArrayList<>();
 		@Override

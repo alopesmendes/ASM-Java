@@ -34,7 +34,7 @@ public class OptHelp implements Option {
 
 	/**
 	 * Method of creation of an OptHelp
-	 * @param args
+	 * @param args list of args.
 	 * @return an option instance of OptHelp
 	 */
 	public static Option create(List<String> args) {

@@ -10,6 +10,11 @@ import org.objectweb.asm.Type;
 
 
 
+/**
+ * The Concat class will rewrite the concatenation.
+ * @author lopes mendes
+ * @author lambert-delavalquerie
+ */
 public class Concat extends ClassVisitor implements Feature {
 	
 	public Concat(int api, ClassVisitor classVisitor) {

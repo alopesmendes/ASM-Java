@@ -9,9 +9,9 @@ public class ParseOptions {
 	
 	/**
 	 * Parse the command line and returns a list of Options
-	 * @param args
-	 * @param optfac
-	 * @param map
+	 * @param args array of Strings.
+	 * @param optfac a OptionFactory.
+	 * @param map a OptionMap.
 	 * @return a list of Option
 	 */
 	public static List<Option> parse(String[] args,OptionFactory optfac, OptionMap map){

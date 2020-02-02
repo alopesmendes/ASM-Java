@@ -81,7 +81,7 @@ public class OptFeatures implements Option {
 	
 	/**
 	 * Method of creation of an OptFeatures
-	 * @param args
+	 * @param args list of args.
 	 * @return an option instance of OptFeatures
 	 */
 	public static Option create(List<String> args) {
@@ -91,7 +91,7 @@ public class OptFeatures implements Option {
 	
 	/**
 	 * Method of creation of an OptFeatures
-	 * @param args
+	 * @param args list of args.
 	 * @return an OptFeatures
 	 */
 	public static OptFeatures createOptFeatures(List<String> args) {
